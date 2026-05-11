@@ -11,8 +11,13 @@ config_version=5
 [application]
 
 config/name="TrashGame"
+run/main_scene="uid://diwlodv8dde15"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/terrain_3d/plugin.cfg")
 
 [physics]
 

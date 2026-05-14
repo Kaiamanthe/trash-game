@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://2iaisbewifl7"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_hmxu6"]
+
+[node name="FishingPole" type="Node3D" unique_id=1844786294]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2089304562]
+transform = Transform3D(0.1, 0, 0, 0, 0.6, 0, 0, 0, 0.1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_hmxu6")

@@ -1,9 +1,42 @@
 [gd_scene format=3 uid="uid://2iaisbewifl7"]
 
+[ext_resource type="Script" uid="uid://cxduhfi3ymko7" path="res://Assets/Models/Items/fishing_pole.gd" id="1_4uqrg"]
+
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_hmxu6"]
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_4uqrg"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_hmxu6"]
+
 [node name="FishingPole" type="Node3D" unique_id=1844786294]
+script = ExtResource("1_4uqrg")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2089304562]
-transform = Transform3D(0.1, 0, 0, 0, 0.6, 0, 0, 0, 0.1, 0, 1, 0)
+transform = Transform3D(0.06, 0, 0, 0, 0.6, 0, 0, 0, 0.06, 0, 1, 0)
 mesh = SubResource("CapsuleMesh_hmxu6")
+
+[node name="MarkPTip" type="Marker3D" parent="MeshInstance3D" unique_id=223538713]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Skeleton3D" type="Skeleton3D" parent="." unique_id=956961867]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0.1, 1.2, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Skeleton3D" unique_id=2089495643]
+transform = Transform3D(0.02, 0, 0, 0, 0.2, 0, 0, 0, 0.02, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_4uqrg")
+
+[node name="MarkStringT" type="Marker3D" parent="Skeleton3D/MeshInstance3D" unique_id=381228715]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="MarkStringB" type="Marker3D" parent="Skeleton3D/MeshInstance3D" unique_id=1713394004]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+
+[node name="Bobber" type="Node3D" parent="." unique_id=708348794]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0.07999999, 0.79999995, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Bobber" unique_id=1130477866]
+transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0, 0, 0)
+mesh = SubResource("SphereMesh_hmxu6")
+
+[node name="MarkBobT" type="Marker3D" parent="Bobber" unique_id=1306488905]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.031843435, 0)

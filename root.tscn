@@ -12,7 +12,7 @@
 metadata/_edit_lock_ = true
 
 [node name="Ocean" parent="Terrain" unique_id=1383353730 instance=ExtResource("2_pyidc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 151.581, 15, 109.537)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 153.62213, 15.0000305, 109.63533)
 
 [node name="Player" parent="." unique_id=1425588007 instance=ExtResource("3_vvh5c")]
-transform = Transform3D(0.82110935, 0, -0.5707709, 0, 1, 0, 0.5707709, 0, 0.82110935, 115.7837, 21.348423, 158.48372)
+transform = Transform3D(-0.7262749, 0, 0.68740433, 0, 1, 0, -0.68740433, 0, -0.7262749, 115.7837, 21.348423, 158.48372)

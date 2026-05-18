@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://2iaisbewifl7"]
 
-[ext_resource type="Script" uid="uid://cxduhfi3ymko7" path="res://Assets/Models/Items/fishing_pole.gd" id="1_4uqrg"]
+[ext_resource type="Script" uid="uid://cxduhfi3ymko7" path="res://Assets/Models/Items/fishing_pole/fishing_pole.gd" id="1_cqtj8"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_4uqrg"]
 
@@ -19,7 +19,7 @@ emission_energy_multiplier = 0.04
 [sub_resource type="ImmediateMesh" id="ImmediateMesh_4uqrg"]
 
 [node name="FishingPole" type="Node3D" unique_id=1844786294]
-script = ExtResource("1_4uqrg")
+script = ExtResource("1_cqtj8")
 
 [node name="Pole" type="Node3D" parent="." unique_id=1195712416]
 transform = Transform3D(0.04, 0, 0, 0, 0.6, 0, 0, 0, 0.04, 0, 0, 0)

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://covu5a5nb0dik"]
 
 [ext_resource type="Script" uid="uid://da1ic4171oud4" path="res://Assets/Models/Player/player.gd" id="1_jdblj"]
-[ext_resource type="PackedScene" uid="uid://2iaisbewifl7" path="res://Assets/Models/Items/fishing_pole.tscn" id="1_yptn0"]
+[ext_resource type="PackedScene" uid="uid://2iaisbewifl7" path="res://Assets/Models/Items/fishing_pole/fishing_pole.tscn" id="1_yptn0"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vho56"]
 

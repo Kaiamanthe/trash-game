@@ -2,41 +2,51 @@
 
 [ext_resource type="Script" uid="uid://cxduhfi3ymko7" path="res://Assets/Models/Items/fishing_pole.gd" id="1_4uqrg"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_hmxu6"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_4uqrg"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_4uqrg"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_ny1jv"]
 
-[sub_resource type="SphereMesh" id="SphereMesh_hmxu6"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_4uqrg"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_4uqrg"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4uqrg"]
+albedo_color = Color(0.7647059, 0.19215687, 0.15294118, 0.74509805)
+emission_enabled = true
+emission = Color(1, 0.2901961, 0.21568628, 1)
+emission_energy_multiplier = 0.04
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_4uqrg"]
 
 [node name="FishingPole" type="Node3D" unique_id=1844786294]
 script = ExtResource("1_4uqrg")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2089304562]
-transform = Transform3D(0.06, 0, 0, 0, 0.6, 0, 0, 0, 0.06, 0, 1, 0)
-mesh = SubResource("CapsuleMesh_hmxu6")
+[node name="Pole" type="Node3D" parent="." unique_id=1195712416]
+transform = Transform3D(0.04, 0, 0, 0, 0.6, 0, 0, 0, 0.04, 0, 0, 0)
 
-[node name="MarkPTip" type="Marker3D" parent="MeshInstance3D" unique_id=223538713]
+[node name="Pole_Body" type="MeshInstance3D" parent="Pole" unique_id=2089304562]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CylinderMesh_4uqrg")
 
-[node name="Skeleton3D" type="Skeleton3D" parent="." unique_id=956961867]
-transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0.1, 1.2, 0)
+[node name="Reel" type="MeshInstance3D" parent="Pole" unique_id=1179726275]
+transform = Transform3D(-1.2795157e-07, -0.3, 0, 0.2, -1.9192736e-07, 0, 0, 0, 3, -0.7725808, 0.44548914, 0)
+mesh = SubResource("CylinderMesh_ny1jv")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Skeleton3D" unique_id=2089495643]
-transform = Transform3D(0.02, 0, 0, 0, 0.2, 0, 0, 0, 0.02, 0, 0, 0)
-mesh = SubResource("CapsuleMesh_4uqrg")
+[node name="MarkLineStart" type="Marker3D" parent="Pole" unique_id=223538713]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 0, 2.0000002, 0)
 
-[node name="MarkStringT" type="Marker3D" parent="Skeleton3D/MeshInstance3D" unique_id=381228715]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+[node name="Bobber" type="CharacterBody3D" parent="." unique_id=1970292868]
+transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0, 0.5, -0.1)
 
-[node name="MarkStringB" type="Marker3D" parent="Skeleton3D/MeshInstance3D" unique_id=1713394004]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+[node name="Coll_Bobber" type="CollisionShape3D" parent="Bobber" unique_id=1565120081]
+shape = SubResource("BoxShape3D_4uqrg")
 
-[node name="Bobber" type="Node3D" parent="." unique_id=708348794]
-transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0.07999999, 0.79999995, 0)
+[node name="MarkLineEnd" type="Marker3D" parent="Bobber" unique_id=1700749052]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4663922, 0)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Bobber" unique_id=1130477866]
-transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0, 0, 0)
-mesh = SubResource("SphereMesh_hmxu6")
+[node name="MeshBobber" type="MeshInstance3D" parent="Bobber" unique_id=758033972]
+mesh = SubResource("SphereMesh_4uqrg")
+surface_material_override/0 = SubResource("StandardMaterial3D_4uqrg")
 
-[node name="MarkBobT" type="Marker3D" parent="Bobber" unique_id=1306488905]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.031843435, 0)
+[node name="Line" type="MeshInstance3D" parent="." unique_id=1716331118]
+mesh = SubResource("ImmediateMesh_4uqrg")

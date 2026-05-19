@@ -12,6 +12,7 @@ func _ready():
 	#Locks and hide mouse cursor
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
+	# None key bind actions
 func _unhandled_input(event: InputEvent):
 	if event is InputEventMouseMotion:
 		# Left/Right
@@ -27,6 +28,7 @@ func _unhandled_input(event: InputEvent):
 			deg_to_rad(80)
 		)
 
+	# Key bind actions due to interactions with physics
 func _physics_process(delta: float) -> void:
 	# Gravity
 	if not is_on_floor():

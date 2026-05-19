@@ -15,6 +15,10 @@ run/main_scene="uid://diwlodv8dde15"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+sheets_globals="*uid://rs47p0eq3ba5"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/terrain_3d/plugin.cfg")

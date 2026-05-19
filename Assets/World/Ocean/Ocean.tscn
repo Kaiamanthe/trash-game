@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dqrv8rsuphkjh"]
 
-[ext_resource type="Shader" uid="uid://c4mmck7edolgs" path="res://Assets/World/Ocean/ocean_surface.gdshader" id="1_sberu"]
+[ext_resource type="Shader" uid="uid://c4mmck7edolgs" path="res://Assets/World/Ocean/ocean_surface.gdshader" id="1_6nca1"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_u0idy"]
 size = Vector2(1000, 1000)
@@ -20,7 +20,7 @@ noise = SubResource("FastNoiseLite_sberu")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mkrdd"]
 render_priority = 0
-shader = ExtResource("1_sberu")
+shader = ExtResource("1_6nca1")
 shader_parameter/albedo = Color(0.3764706, 0.2901961, 0.8862745, 1)
 shader_parameter/water_texture1 = SubResource("NoiseTexture2D_mkrdd")
 shader_parameter/water_texture2 = SubResource("NoiseTexture2D_ogecq")

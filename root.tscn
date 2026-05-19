@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://diwlodv8dde15"]
 
 [ext_resource type="PackedScene" uid="uid://l53dpxk1bis8" path="res://Assets/World/Land/trashisland.tscn" id="1_pq8q7"]
-[ext_resource type="PackedScene" uid="uid://dqrv8rsuphkjh" path="res://Ocean.tscn" id="2_pyidc"]
+[ext_resource type="PackedScene" uid="uid://dqrv8rsuphkjh" path="res://Assets/World/Ocean/Ocean.tscn" id="2_pyidc"]
 [ext_resource type="PackedScene" uid="uid://covu5a5nb0dik" path="res://Assets/Models/Player/player.tscn" id="3_vvh5c"]
 
 [node name="Root" type="Node3D" unique_id=1100529618]

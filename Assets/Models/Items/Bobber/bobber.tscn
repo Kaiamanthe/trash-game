@@ -12,6 +12,8 @@ emission_energy_multiplier = 0.04
 
 [node name="Bobber" type="CharacterBody3D" unique_id=1457097687]
 transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0, 0, 0)
+collision_layer = 3
+collision_mask = 3
 
 [node name="Bobber_Col" type="CollisionShape3D" parent="." unique_id=1307966221]
 shape = SubResource("BoxShape3D_4uqrg")

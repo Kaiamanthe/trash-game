@@ -3,6 +3,7 @@ extends CharacterBody3D
 const SPEED = 5.0
 const JUMP_VELOCITY = 6.5
 @onready var PoleAnimation = $AnimationPlayer
+@onready var FishingPole = $FishingPole
 
 func _physics_process(delta: float) -> void:
 	# Gravity
@@ -16,6 +17,7 @@ func _physics_process(delta: float) -> void:
 	# Cast
 	if Input.is_action_just_pressed("interact_cast"):
 		PoleAnimation.play("Cast_Pole")
+		FishingPole._fishing_Starts()
 
 	# Test
 	if Input.is_action_just_pressed("test_key"):

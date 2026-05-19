@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://lnoviodegmq5"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4uqrg"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_4uqrg"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4uqrg"]
+albedo_color = Color(0.7647059, 0.19215687, 0.15294118, 0.74509805)
+emission_enabled = true
+emission = Color(1, 0.2901961, 0.21568628, 1)
+emission_energy_multiplier = 0.04
+
+[node name="Bobber" type="CharacterBody3D" unique_id=1457097687]
+transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0, 0, 0)
+
+[node name="Coll_Bobber" type="CollisionShape3D" parent="." unique_id=1307966221]
+shape = SubResource("BoxShape3D_4uqrg")
+
+[node name="MarkLineEnd" type="Marker3D" parent="." unique_id=113623299]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4663922, 0)
+
+[node name="MeshBobber" type="MeshInstance3D" parent="." unique_id=387346654]
+mesh = SubResource("SphereMesh_4uqrg")
+surface_material_override/0 = SubResource("StandardMaterial3D_4uqrg")

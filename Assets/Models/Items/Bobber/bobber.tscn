@@ -13,12 +13,12 @@ emission_energy_multiplier = 0.04
 [node name="Bobber" type="CharacterBody3D" unique_id=1457097687]
 transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0, 0, 0)
 
-[node name="Coll_Bobber" type="CollisionShape3D" parent="." unique_id=1307966221]
+[node name="Bobber_Col" type="CollisionShape3D" parent="." unique_id=1307966221]
 shape = SubResource("BoxShape3D_4uqrg")
 
-[node name="MarkLineEnd" type="Marker3D" parent="." unique_id=113623299]
+[node name="Mark_LineEnd" type="Marker3D" parent="." unique_id=113623299]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4663922, 0)
 
-[node name="MeshBobber" type="MeshInstance3D" parent="." unique_id=387346654]
+[node name="Bobber_Mesh" type="MeshInstance3D" parent="." unique_id=387346654]
 mesh = SubResource("SphereMesh_4uqrg")
 surface_material_override/0 = SubResource("StandardMaterial3D_4uqrg")

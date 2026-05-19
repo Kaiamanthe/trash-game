@@ -42,10 +42,10 @@ shader_parameter/FoamGlowIntensity = 0.5
 [node name="Ocean" type="StaticBody3D" unique_id=1477550180]
 collision_layer = 2
 
-[node name="OceanMesh" type="MeshInstance3D" parent="." unique_id=2115223944]
+[node name="Ocean_Mesh" type="MeshInstance3D" parent="." unique_id=2115223944]
 mesh = SubResource("PlaneMesh_u0idy")
 skin = SubResource("Skin_20fyr")
 surface_material_override/0 = SubResource("ShaderMaterial_mkrdd")
 
-[node name="OceanCol" type="CollisionShape3D" parent="." unique_id=1178343058]
+[node name="Ocean_Col" type="CollisionShape3D" parent="." unique_id=1178343058]
 shape = SubResource("WorldBoundaryShape3D_sberu")

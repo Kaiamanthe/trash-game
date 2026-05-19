@@ -2,8 +2,30 @@ extends CharacterBody3D
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 6.5
-@onready var PoleAnimation = $AnimationPlayer
+@onready var PoleAnimation = $Player_AnimationPlayer
 @onready var FishingPole = $FishingPole
+@onready var CameraPivot = $Camera_Pivot
+
+var mouse_senitivity := 0.002
+
+func _ready():
+	#Locks and hide mouse cursor
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+func _unhandled_input(event: InputEvent):
+	if event is InputEventMouseMotion:
+		# Left/Right
+		rotate_y(-event.relative.x * mouse_senitivity)
+		
+		# Up/Down
+		CameraPivot.rotate_x(-event.relative.y * mouse_senitivity)
+		
+		# Vert Bound
+		CameraPivot.rotation.x = clamp(
+			CameraPivot.rotation.x,
+			deg_to_rad(-80),
+			deg_to_rad(80)
+		)
 
 func _physics_process(delta: float) -> void:
 	# Gravity

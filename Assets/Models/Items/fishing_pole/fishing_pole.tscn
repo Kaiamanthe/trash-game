@@ -20,11 +20,11 @@ transform = Transform3D(0.04, 0, 0, 0, 0.6, 0, 0, 0, 0.04, 0, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 mesh = SubResource("CylinderMesh_4uqrg")
 
-[node name="Reel" type="MeshInstance3D" parent="Pole" unique_id=1179726275]
+[node name="Pole_Reel" type="MeshInstance3D" parent="Pole" unique_id=1179726275]
 transform = Transform3D(-1.2795157e-07, -0.3, 0, 0.2, -1.9192736e-07, 0, 0, 0, 3, -0.7725808, 0.44548914, 0)
 mesh = SubResource("CylinderMesh_ny1jv")
 
-[node name="MarkLineStart" type="Marker3D" parent="Pole" unique_id=223538713]
+[node name="Mark_LineStart" type="Marker3D" parent="Pole" unique_id=223538713]
 transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 0, 2.0000002, 0)
 
 [node name="Line" type="MeshInstance3D" parent="." unique_id=1716331118]
@@ -32,4 +32,6 @@ mesh = SubResource("ImmediateMesh_4uqrg")
 
 [node name="Bobber" parent="." unique_id=1457097687 instance=ExtResource("2_frvqg")]
 transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0, 0.5, -0.1)
+collision_layer = 3
+collision_mask = 3
 script = ExtResource("3_xicr3")

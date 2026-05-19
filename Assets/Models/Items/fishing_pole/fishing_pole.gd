@@ -2,8 +2,8 @@ extends Node3D
 
 @onready var bobber: CharacterBody3D = $Bobber
 @onready var line: MeshInstance3D = $Line
-@onready var mark_line_end: Marker3D = $Pole/MarkLineStart
-@onready var mark_line_start: Marker3D = $Bobber/MarkLineEnd
+@onready var mark_line_end: Marker3D = $Pole/Mark_LineStart
+@onready var mark_line_start: Marker3D = $Bobber/Mark_LineEnd
 
 # Inicialize the overloaded _physics_process
 func _ready() -> void:

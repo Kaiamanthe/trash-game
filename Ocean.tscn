@@ -3,6 +3,7 @@
 [ext_resource type="Shader" uid="uid://c4mmck7edolgs" path="res://Assets/World/Ocean/ocean_surface.gdshader" id="1_sberu"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_u0idy"]
+size = Vector2(1000, 1000)
 
 [sub_resource type="Skin" id="Skin_20fyr"]
 
@@ -36,10 +37,15 @@ shader_parameter/FoamSize = 0.5
 shader_parameter/WaterOpacity = 0.95
 shader_parameter/FoamGlowIntensity = 0.5
 
-[node name="Ocean" type="Node3D" unique_id=1383353730]
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_sberu"]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2115223944]
-transform = Transform3D(1000, 0, 0, 0, 2, 0, 0, 0, 1000, 0, 0, 0)
+[node name="Ocean" type="StaticBody3D" unique_id=1477550180]
+collision_layer = 2
+
+[node name="OceanMesh" type="MeshInstance3D" parent="." unique_id=2115223944]
 mesh = SubResource("PlaneMesh_u0idy")
 skin = SubResource("Skin_20fyr")
 surface_material_override/0 = SubResource("ShaderMaterial_mkrdd")
+
+[node name="OceanCol" type="CollisionShape3D" parent="." unique_id=1178343058]
+shape = SubResource("WorldBoundaryShape3D_sberu")

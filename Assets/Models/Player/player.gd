@@ -5,6 +5,8 @@ const JUMP_VELOCITY = 6.5
 @onready var PoleAnimation = $Player_AnimationPlayer
 @onready var FishingPole = $FishingPole
 @onready var CameraPivot = $Camera_Pivot
+@onready var Line = $FishingPole/Line
+@onready var Bobber = $FishingPole/Bobber
 
 var mouse_senitivity := 0.002
 
@@ -39,13 +41,15 @@ func _physics_process(delta: float) -> void:
 		velocity.y = JUMP_VELOCITY
 
 	# Cast
-	if Input.is_action_just_pressed("interact_cast"):
+	if Input.is_action_just_pressed("int_cast"):
 		PoleAnimation.play("Cast_Pole")
 		FishingPole._fishing_Starts()
 
 	# Test
 	if Input.is_action_just_pressed("test_key"):
 		print("Test key hit")
+		Line._refresh_line()
+		Bobber._reset_bobber_to_pole()
 		
 
 	# Get input and direction

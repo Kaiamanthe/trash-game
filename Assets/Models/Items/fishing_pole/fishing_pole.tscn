@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cxduhfi3ymko7" path="res://Assets/Models/Items/fishing_pole/fishing_pole.gd" id="1_cqtj8"]
 [ext_resource type="PackedScene" uid="uid://lnoviodegmq5" path="res://Assets/Models/Items/Bobber/bobber.tscn" id="2_frvqg"]
+[ext_resource type="Script" uid="uid://55vspc0c1n1y" path="res://Assets/Models/Items/fishing_pole/line.gd" id="2_t7ioe"]
 [ext_resource type="Script" uid="uid://l34y8nid25vo" path="res://Assets/Models/Items/Bobber/bobber.gd" id="3_xicr3"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_4uqrg"]
@@ -29,9 +30,11 @@ transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 0, 2.0000002, 0)
 
 [node name="Line" type="MeshInstance3D" parent="." unique_id=1716331118]
 mesh = SubResource("ImmediateMesh_4uqrg")
+script = ExtResource("2_t7ioe")
 
 [node name="Bobber" parent="." unique_id=1457097687 instance=ExtResource("2_frvqg")]
 transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0, 0.5, -0.1)
-collision_layer = 1
-collision_mask = 1
 script = ExtResource("3_xicr3")
+
+[node name="Mark_Bobber_Home" type="Marker3D" parent="." unique_id=93465165]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.1)

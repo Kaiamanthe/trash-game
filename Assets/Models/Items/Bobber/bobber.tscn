@@ -10,7 +10,7 @@ emission_enabled = true
 emission = Color(1, 0.2901961, 0.21568628, 1)
 emission_energy_multiplier = 0.04
 
-[node name="Bobber" type="CharacterBody3D" unique_id=1457097687]
+[node name="Bobber" type="CharacterBody3D" unique_id=125339246]
 transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0, 0, 0)
 collision_layer = 3
 collision_mask = 3

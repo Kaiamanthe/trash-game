@@ -1,16 +1,14 @@
 extends CharacterBody3D
 
-@onready var Line = $"../Line"
+@onready var bobber = $"."
+@onready var mark_line_start = $"../Pole/Mark_LineStart"
 @onready var mark_bobber_home = $"../Mark_Bobber_Home"
 
 var in_water := false
 var buoyancy_time := 0
 var water_y = 0.0
 
-
-
 func _physics_process(delta):
-	
 	if not in_water:
 		move_and_slide()
 		velocity.y -= sheets_globals.gravity * delta
@@ -37,7 +35,15 @@ func _physics_process(delta):
 				pass
 		
 
+func on_pole_ready():
+	_reset_bobber_to_pole()
+
+func on_cast():
+	bobber.set_physics_process(true)
+	bobber.global_position = mark_line_start.global_position
+	bobber.velocity = -global_basis.z * 15 + Vector3.UP * 5	
+
 func _reset_bobber_to_pole():
-	print("Bobber reset")
+	set_physics_process(false)
 	global_position = mark_bobber_home.global_position
 	velocity = Vector3(0, 0, 0)

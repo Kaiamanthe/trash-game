@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://l53dpxk1bis8" path="res://Assets/World/Land/trashisland.tscn" id="1_pq8q7"]
 [ext_resource type="PackedScene" uid="uid://dqrv8rsuphkjh" path="res://Assets/World/Ocean/Ocean.tscn" id="2_pyidc"]
 [ext_resource type="PackedScene" uid="uid://covu5a5nb0dik" path="res://Assets/Models/Player/player.tscn" id="3_vvh5c"]
+[ext_resource type="PackedScene" uid="uid://lnoviodegmq5" path="res://Assets/Models/Items/bobber/bobber.tscn" id="4_28aoi"]
 
 [node name="Root" type="Node3D" unique_id=1100529618]
 
@@ -19,3 +20,5 @@ collision_mask = 2
 transform = Transform3D(-0.7262749, 0, 0.68740433, 0, 1, 0, -0.68740433, 0, -0.7262749, 115.7837, 21.348423, 158.48372)
 collision_layer = 3
 collision_mask = 3
+
+[node name="Bobber" parent="." unique_id=750754813 instance=ExtResource("4_28aoi")]

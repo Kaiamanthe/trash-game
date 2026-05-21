@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://da1ic4171oud4" path="res://Assets/Models/Player/player.gd" id="1_jdblj"]
 [ext_resource type="PackedScene" uid="uid://2iaisbewifl7" path="res://Assets/Models/Items/fishing_pole/fishing_pole.tscn" id="1_yptn0"]
+[ext_resource type="Script" uid="uid://d1dcjtn0aww5p" path="res://Assets/Models/Player/player_animation_player.gd" id="3_fkmn4"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vho56"]
 
@@ -69,6 +70,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.5446633, -0.5)
 
 [node name="Player_AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1067017927]
 libraries/ = SubResource("AnimationLibrary_j21jn")
+script = ExtResource("3_fkmn4")
 
 [node name="Camera_Pivot" type="Node3D" parent="." unique_id=487654817]
 

@@ -1,7 +1,13 @@
 extends CharacterBody3D
 
+# Const
 const SPEED = 5.0
 const JUMP_VELOCITY = 6.5
+
+#Signals
+signal on_cast_started
+
+# Ref
 @onready var PoleAnimation = $Player_AnimationPlayer
 @onready var FishingPole = $FishingPole
 @onready var CameraPivot = $Camera_Pivot
@@ -11,9 +17,13 @@ const JUMP_VELOCITY = 6.5
 var mouse_senitivity := 0.002
 
 func _ready():
-	#Locks and hide mouse cursor
+	# Locks and hide mouse cursor
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-
+	
+	# Connections
+	on_cast_started.connect(FishingPole.on_cast_started)
+	on_cast_started.connect(PoleAnimation.on_cast_started)
+	
 	# None key bind actions
 func _unhandled_input(event: InputEvent):
 	if event is InputEventMouseMotion:
@@ -42,8 +52,7 @@ func _physics_process(delta: float) -> void:
 
 	# Cast
 	if Input.is_action_just_pressed("int_cast"):
-		PoleAnimation.play("Cast_Pole")
-		FishingPole._fishing_Starts()
+		_cast()
 
 	# Test
 	if Input.is_action_just_pressed("test_key"):
@@ -61,5 +70,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
-
 	move_and_slide()
+	
+func _cast():
+	on_cast_started.emit()

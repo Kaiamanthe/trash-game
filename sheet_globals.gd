@@ -1,8 +1,9 @@
 extends Node
 
-# Physic Var
+# Physics
 const gravity = 9.8
-const water_level = 15
+const water_level = 15.0
 
-# Col layers
+# Collision layers
 const terrain_layer = 1
+const water_layer = 2

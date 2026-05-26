@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://2iaisbewifl7"]
+
+[ext_resource type="Script" uid="uid://cxduhfi3ymko7" path="res://Assets/Models/Items/fishing_pole/fishing_pole.gd" id="1_cqtj8"]
+[ext_resource type="PackedScene" uid="uid://lnoviodegmq5" path="res://Assets/Models/Items/Bobber/bobber.tscn" id="2_frvqg"]
+[ext_resource type="Script" uid="uid://55vspc0c1n1y" path="res://Assets/Models/Items/fishing_pole/line.gd" id="2_t7ioe"]
+[ext_resource type="Script" uid="uid://l34y8nid25vo" path="res://Assets/Models/Items/Bobber/bobber.gd" id="3_xicr3"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4uqrg"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ny1jv"]
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_4uqrg"]
+
+[node name="FishingPole" type="Node3D" unique_id=1844786294]
+script = ExtResource("1_cqtj8")
+
+[node name="Pole" type="Node3D" parent="." unique_id=1195712416]
+transform = Transform3D(0.04, 0, 0, 0, 0.6, 0, 0, 0, 0.04, 0, 0, 0)
+
+[node name="Pole_Body" type="MeshInstance3D" parent="Pole" unique_id=2089304562]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CylinderMesh_4uqrg")
+
+[node name="Pole_Reel" type="MeshInstance3D" parent="Pole" unique_id=1179726275]
+transform = Transform3D(-1.2795157e-07, -0.3, 0, 0.2, -1.9192736e-07, 0, 0, 0, 3, -0.7725808, 0.44548914, 0)
+mesh = SubResource("CylinderMesh_ny1jv")
+
+[node name="Mark_LineStart" type="Marker3D" parent="Pole" unique_id=223538713]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 0, 2.0000002, 0)
+
+[node name="Line" type="MeshInstance3D" parent="." unique_id=1716331118]
+mesh = SubResource("ImmediateMesh_4uqrg")
+script = ExtResource("2_t7ioe")
+
+[node name="Bobber" parent="." unique_id=1457097687 instance=ExtResource("2_frvqg")]
+transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0, 0.5, -0.1)
+script = ExtResource("3_xicr3")
+
+[node name="Mark_Bobber_Home" type="Marker3D" parent="." unique_id=93465165]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.1)

@@ -4,6 +4,10 @@
 [ext_resource type="PackedScene" uid="uid://dqrv8rsuphkjh" path="res://Assets/World/Ocean/Ocean.tscn" id="2_pyidc"]
 [ext_resource type="PackedScene" uid="uid://covu5a5nb0dik" path="res://Assets/Models/Player/player.tscn" id="3_vvh5c"]
 [ext_resource type="PackedScene" uid="uid://lnoviodegmq5" path="res://Assets/Models/Items/bobber/bobber.tscn" id="4_28aoi"]
+[ext_resource type="PackedScene" uid="uid://2iaisbewifl7" path="res://Assets/Models/Items/fishing_pole/fishing_pole.tscn" id="4_jnlp7"]
+[ext_resource type="Script" uid="uid://55vspc0c1n1y" path="res://Assets/Models/Items/fishing_pole/line.gd" id="5_l8v81"]
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_vyht1"]
 
 [node name="Root" type="Node3D" unique_id=1100529618]
 
@@ -14,11 +18,17 @@ metadata/_edit_lock_ = true
 
 [node name="Ocean" parent="Terrain" unique_id=1383353730 instance=ExtResource("2_pyidc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 153.02737, 15.000023, 109.72949)
-collision_mask = 2
 
 [node name="Player" parent="." unique_id=1425588007 instance=ExtResource("3_vvh5c")]
 transform = Transform3D(-0.7262749, 0, 0.68740433, 0, 1, 0, -0.68740433, 0, -0.7262749, 115.7837, 21.348423, 158.48372)
-collision_layer = 3
+collision_layer = 4
 collision_mask = 3
 
 [node name="Bobber" parent="." unique_id=750754813 instance=ExtResource("4_28aoi")]
+
+[node name="FishingPole" parent="." unique_id=1844786294 instance=ExtResource("4_jnlp7")]
+transform = Transform3D(-0.7262749, 0, 0.68740433, 0, 1, 0, -0.68740433, 0, -0.7262749, 114.205475, 21.894402, 160.4505)
+
+[node name="Line" type="MeshInstance3D" parent="." unique_id=914291754]
+mesh = SubResource("ImmediateMesh_vyht1")
+script = ExtResource("5_l8v81")

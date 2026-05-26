@@ -1,49 +1,158 @@
-extends CharacterBody3D
+extends RigidBody3D
 
-@onready var bobber = $"."
-@onready var mark_line_start = $"../Pole/Mark_LineStart"
-@onready var mark_bobber_home = $"../Mark_Bobber_Home"
+enum BobberState {
+	home_pos,
+	casting,
+	in_water,
+	on_land
+}
 
-var in_water := false
-var buoyancy_time := 0
-var water_y = 0.0
+@onready var mark_line_start: Marker3D = $"../FishingPole/Mark_LineStart"
+@onready var mark_bobber_home: Marker3D = $"../FishingPole/Mark_Bobber_Home"
+@onready var bobber_area: Area3D = $Bobber_Area
 
-func _physics_process(delta):
-	if not in_water:
-		move_and_slide()
-		velocity.y -= sheets_globals.gravity * delta
-		
-	else:
-		buoyancy_time += delta
-		
-		# buoyancy sim
-		var target_y = water_y + sin(buoyancy_time * 2) * 0.15
-		global_position = lerp(global_position.y, target_y, delta * 3.0)
-		
-		velocity.x = lerp(velocity.x, 0.0, delta * 2.0)
-		velocity.z = lerp(velocity.z, 0.0, delta * 2.0)
-		velocity.y = 0.0
-		
-		for i in get_slide_collision_count():
-			var collision = get_slide_collision(i)
-			var collider = collision.get_collider()
-			if collider.collision_layer &  sheets_globals.water_layer:
-				in_water = true
-				water_y = collision.get_position().y
-				velocity *= 0.25
-			else:
-				pass
-		
+var state: BobberState = BobberState.home_pos
 
-func on_pole_ready():
-	_reset_bobber_to_pole()
+var buoyancy_time := 0.0
+var water_anchor_position := Vector3.ZERO
 
-func on_cast():
-	bobber.set_physics_process(true)
-	bobber.global_position = mark_line_start.global_position
-	bobber.velocity = -global_basis.z * 15 + Vector3.UP * 5	
+const _cast_force := 18.0
+const _cast_up_force := 5.0
+const _water_drag := 0.25
+const _home_follow_speed := 8.0
+const _home_rotation_speed := 10.0
+const _water_settle_speed := 3.0
+const _water_damping := 2.5
+const _water_bob_speed := 2.0
+const _water_bob_amount := 0.15
 
-func _reset_bobber_to_pole():
-	set_physics_process(false)
+func _ready() -> void:
+	contact_monitor = true
+	max_contacts_reported = 4
+
+	body_entered.connect(_on_body_entered)
+	bobber_area.area_entered.connect(_on_area_entered)
+
+	on_pole_ready()
+
+func _physics_process(delta: float) -> void:
+	match state:
+		BobberState.home_pos:
+			_follow_home_pos(delta)
+
+		BobberState.casting:
+			pass
+
+		BobberState.in_water:
+			_float_in_water(delta)
+
+		BobberState.on_land:
+			pass
+
+func on_pole_ready() -> void:
+	state = BobberState.home_pos
+
+	freeze = true
+	set_physics_process(true)
+
+	linear_velocity = Vector3.ZERO
+	angular_velocity = Vector3.ZERO
+
 	global_position = mark_bobber_home.global_position
-	velocity = Vector3(0, 0, 0)
+	global_rotation = mark_bobber_home.global_rotation
+
+func on_cast() -> void:
+	state = BobberState.casting
+
+	freeze = false
+
+	linear_velocity = Vector3.ZERO
+	angular_velocity = Vector3.ZERO
+
+	global_position = mark_line_start.global_position
+
+	var cast_direction := -mark_line_start.global_basis.z.normalized()
+
+	linear_velocity = (
+		cast_direction * _cast_force
+		+ Vector3.UP * _cast_up_force
+	)
+
+func _follow_home_pos(delta: float) -> void:
+	global_position = global_position.lerp(
+		mark_bobber_home.global_position,
+		delta * _home_follow_speed
+	)
+
+	global_basis = global_basis.slerp(
+		mark_bobber_home.global_basis,
+		delta * _home_rotation_speed
+	)
+
+	linear_velocity = Vector3.ZERO
+	angular_velocity = Vector3.ZERO
+
+func _float_in_water(delta: float) -> void:
+	buoyancy_time += delta
+
+	var target_position := water_anchor_position
+	target_position.y = (
+		sheets_globals.water_level
+		+ sin(buoyancy_time * _water_bob_speed) * _water_bob_amount
+	)
+
+	global_position = global_position.lerp(
+		target_position,
+		delta * _water_settle_speed
+	)
+
+	linear_velocity = linear_velocity.lerp(
+		Vector3.ZERO,
+		delta * _water_damping
+	)
+
+	linear_velocity.y = 0.0
+
+func _on_body_entered(body) -> void:
+	if state != BobberState.casting:
+		return
+
+	if _is_on_layer(body, sheets_globals.terrain_layer):
+		_land_on_terrain()
+		return
+
+func _on_area_entered(area: Area3D) -> void:
+	if state != BobberState.casting:
+		return
+
+	if _is_on_layer(area, sheets_globals.water_layer):
+		_enter_water()
+		return
+
+func _enter_water() -> void:
+	state = BobberState.in_water
+
+	freeze = true
+	buoyancy_time = 0.0
+
+	water_anchor_position = global_position
+	water_anchor_position.y = sheets_globals.water_level
+
+	linear_velocity *= _water_drag
+
+func _land_on_terrain() -> void:
+	state = BobberState.on_land
+
+	freeze = true
+
+	linear_velocity = Vector3.ZERO
+	angular_velocity = Vector3.ZERO
+
+func _is_on_layer(collision_object, layer_number: int) -> bool:
+	if collision_object == null:
+		return false
+
+	if not "collision_layer" in collision_object:
+		return false
+
+	return collision_object.collision_layer & (1 << (layer_number - 1)) != 0

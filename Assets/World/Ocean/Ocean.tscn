@@ -21,7 +21,7 @@ noise = SubResource("FastNoiseLite_sberu")
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mkrdd"]
 render_priority = 0
 shader = ExtResource("1_6nca1")
-shader_parameter/albedo = Color(0.3764706, 0.2901961, 0.8862745, 1)
+shader_parameter/albedo = Color(0.29803923, 0.16862746, 0.80784315, 1)
 shader_parameter/water_texture1 = SubResource("NoiseTexture2D_mkrdd")
 shader_parameter/water_texture2 = SubResource("NoiseTexture2D_ogecq")
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_20fyr")
@@ -30,7 +30,7 @@ shader_parameter/scroll_speed2 = Vector2(-0.03, 0)
 shader_parameter/blend_factor = 0.5
 shader_parameter/scale1 = Vector2(10, 10)
 shader_parameter/scale2 = Vector2(10, 10)
-shader_parameter/wave_strength = 1.0
+shader_parameter/wave_strength = 0.6
 shader_parameter/wave_scale = 0.02
 shader_parameter/pixelation_level = 64
 shader_parameter/FoamSize = 0.5
@@ -39,14 +39,21 @@ shader_parameter/FoamGlowIntensity = 0.5
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_sberu"]
 
+[sub_resource type="Environment" id="Environment_6nca1"]
+
 [node name="Ocean" type="Area3D" unique_id=1607694153]
-collision_layer = 3
-collision_mask = 3
+collision_layer = 2
+collision_mask = 2
 
 [node name="Ocean_Mesh" type="MeshInstance3D" parent="." unique_id=2115223944]
+layers = 3
 mesh = SubResource("PlaneMesh_u0idy")
 skin = SubResource("Skin_20fyr")
 surface_material_override/0 = SubResource("ShaderMaterial_mkrdd")
 
 [node name="Ocean_Col" type="CollisionShape3D" parent="." unique_id=1178343058]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
 shape = SubResource("WorldBoundaryShape3D_sberu")
+
+[node name="Ocean_Environment" type="WorldEnvironment" parent="." unique_id=456350421]
+environment = SubResource("Environment_6nca1")

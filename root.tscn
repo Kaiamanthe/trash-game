@@ -3,9 +3,12 @@
 [ext_resource type="PackedScene" uid="uid://l53dpxk1bis8" path="res://Assets/World/Land/trashisland.tscn" id="1_pq8q7"]
 [ext_resource type="PackedScene" uid="uid://dqrv8rsuphkjh" path="res://Assets/World/Ocean/Ocean.tscn" id="2_pyidc"]
 [ext_resource type="PackedScene" uid="uid://covu5a5nb0dik" path="res://Assets/Models/Player/player.tscn" id="3_vvh5c"]
-[ext_resource type="PackedScene" uid="uid://lnoviodegmq5" path="res://Assets/Models/Items/bobber/bobber.tscn" id="4_28aoi"]
+[ext_resource type="PackedScene" uid="uid://lnoviodegmq5" path="res://Assets/Models/Items/Bobber/bobber.tscn" id="4_28aoi"]
 [ext_resource type="PackedScene" uid="uid://2iaisbewifl7" path="res://Assets/Models/Items/fishing_pole/fishing_pole.tscn" id="4_jnlp7"]
 [ext_resource type="Script" uid="uid://55vspc0c1n1y" path="res://Assets/Models/Items/fishing_pole/line.gd" id="5_l8v81"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_l8v81"]
+size = Vector3(80, 38.816406, 10)
 
 [sub_resource type="ImmediateMesh" id="ImmediateMesh_vyht1"]
 
@@ -19,10 +22,57 @@ metadata/_edit_lock_ = true
 [node name="Ocean" parent="Terrain" unique_id=1383353730 instance=ExtResource("2_pyidc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 153.02737, 15.000023, 109.72949)
 
+[node name="Walls" type="Node3D" parent="Terrain" unique_id=491818983]
+
+[node name="InvisWall" type="StaticBody3D" parent="Terrain/Walls" unique_id=1141929354]
+transform = Transform3D(0.9962372, 0, -0.08666893, 0, 1, 0, 0.08666893, 0, 0.9962372, 100.54332, 33.43744, 166.39824)
+collision_layer = 16
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Terrain/Walls/InvisWall" unique_id=1959848212]
+transform = Transform3D(0.6809637, 0, -0.7323172, 0, 1, 0, 0.7323172, 0, 0.6809637, 0, 0, 0)
+shape = SubResource("BoxShape3D_l8v81")
+
+[node name="InvisWall2" type="StaticBody3D" parent="Terrain/Walls" unique_id=1493337980]
+transform = Transform3D(0.38379583, 0, 0.92341805, 0, 1, 0, -0.92341805, 0, 0.38379583, 142.26494, 33.43744, 176.98782)
+collision_layer = 16
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Terrain/Walls/InvisWall2" unique_id=1089999399]
+transform = Transform3D(0.6809637, 0, -0.7323172, 0, 1, 0, 0.7323172, 0, 0.6809637, 0, 0, 0)
+shape = SubResource("BoxShape3D_l8v81")
+
+[node name="InvisWall3" type="StaticBody3D" parent="Terrain/Walls" unique_id=939893582]
+transform = Transform3D(0.99999833, 0, 0.0018675029, 0, 1, 0, -0.0018675029, 0, 0.99999833, 139.43878, 33.43744, 149.26274)
+collision_layer = 16
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Terrain/Walls/InvisWall3" unique_id=1508745931]
+transform = Transform3D(0.6809637, 0, -0.7323172, 0, 1, 0, 0.7323172, 0, 0.6809637, 0, 0, 0)
+shape = SubResource("BoxShape3D_l8v81")
+
+[node name="InvisWall4" type="StaticBody3D" parent="Terrain/Walls" unique_id=1078587965]
+transform = Transform3D(0.9844451, 0, 0.17569318, 0, 1, 0, -0.17569318, 0, 0.9844451, 83.641716, 33.43744, 98.587425)
+collision_layer = 16
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Terrain/Walls/InvisWall4" unique_id=521969976]
+transform = Transform3D(0.6809637, 0, -0.7323172, 0, 1, 0, 0.7323172, 0, 0.6809637, 0, 0, 0)
+shape = SubResource("BoxShape3D_l8v81")
+
+[node name="InvisWall5" type="StaticBody3D" parent="Terrain/Walls" unique_id=187207098]
+transform = Transform3D(0.57902503, 0, -0.81530976, 0, 1, 0, 0.81530976, 0, 0.57902503, 78.11309, 33.43744, 127.81074)
+collision_layer = 16
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Terrain/Walls/InvisWall5" unique_id=164283120]
+transform = Transform3D(0.6809637, 0, -0.7323172, 0, 1, 0, 0.7323172, 0, 0.6809637, 0, 0, 0)
+shape = SubResource("BoxShape3D_l8v81")
+
 [node name="Player" parent="." unique_id=1425588007 instance=ExtResource("3_vvh5c")]
 transform = Transform3D(-0.7262749, 0, 0.68740433, 0, 1, 0, -0.68740433, 0, -0.7262749, 115.7837, 21.348423, 158.48372)
 collision_layer = 4
-collision_mask = 3
+collision_mask = 19
 
 [node name="Bobber" parent="." unique_id=750754813 instance=ExtResource("4_28aoi")]
 

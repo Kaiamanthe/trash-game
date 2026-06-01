@@ -49,6 +49,7 @@ script = ExtResource("3_fkmn4")
 [node name="Camera3D" type="Camera3D" parent="Camera_Pivot" unique_id=1680032211]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
 current = true
+far = 1000.0
 
 [node name="Mark_Player_Hand" type="Marker3D" parent="Camera_Pivot" unique_id=170962824]
 transform = Transform3D(0.9503149, 0, -0.31129017, 0, 1, 0, 0.31129017, 0, 0.9503149, 0.52697843, 1.5337322, -0.5714517)

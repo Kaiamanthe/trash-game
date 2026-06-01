@@ -11,10 +11,8 @@ signal on_cast
 
 func _ready() -> void:
 	on_pole_ready.connect(bobber.on_pole_ready)
-	on_pole_ready.connect(line.on_pole_ready)
 
 	on_cast.connect(bobber.on_cast)
-	on_cast.connect(line.on_cast)
 
 	on_pole_ready.emit()
 

@@ -11,6 +11,7 @@ signal on_cast_started
 @onready var hand_marker: Marker3D = $Camera_Pivot/Mark_Player_Hand
 
 var mouse_sensitivity := 0.002
+var free_cam := false
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -19,7 +20,7 @@ func _ready():
 	on_cast_started.connect(pole_animation.on_cast_started)
 
 func _unhandled_input(event: InputEvent):
-	if event is InputEventMouseMotion:
+	if event is InputEventMouseMotion and not free_cam:
 		rotate_y(-event.relative.x * mouse_sensitivity)
 
 		camera_pivot.rotate_x(-event.relative.y * mouse_sensitivity)
@@ -33,6 +34,12 @@ func get_hand_marker() -> Marker3D:
 	return hand_marker
 
 func _physics_process(delta: float) -> void:
+	if Input.is_action_just_pressed("debug_close"):
+		get_tree().quit()
+
+	if Input.is_action_just_pressed("free_cam"):
+		_toggle_free_cam()
+
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
@@ -56,3 +63,11 @@ func _physics_process(delta: float) -> void:
 
 func _cast():
 	on_cast_started.emit()
+
+func _toggle_free_cam():
+	free_cam = !free_cam
+
+	if free_cam:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	else:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED

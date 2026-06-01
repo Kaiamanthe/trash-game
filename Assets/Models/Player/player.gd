@@ -30,8 +30,6 @@ func _unhandled_input(event: InputEvent):
 			deg_to_rad(80)
 		)
 
-func get_hand_marker() -> Marker3D:
-	return hand_marker
 
 func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("debug_close"):

@@ -7,7 +7,7 @@ signal on_cast
 @onready var bobber: RigidBody3D = $"../Bobber"
 @onready var line: MeshInstance3D = $"../Line"
 @onready var mark_line_start: Marker3D = $Mark_LineStart
-@onready var mark_player_hand: Marker3D = player.get_hand_marker()
+@onready var mark_player_hand: Marker3D = $"../Player/Camera_Pivot/Mark_Player_Hand"
 
 func _ready() -> void:
 	on_pole_ready.connect(bobber.on_pole_ready)
@@ -19,6 +19,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if mark_player_hand == null:
 		return
+	print("passing")
 	global_transform = mark_player_hand.global_transform
 	
 

@@ -39,8 +39,6 @@ shader_parameter/FoamGlowIntensity = 0.5
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_sberu"]
 
-[sub_resource type="Environment" id="Environment_6nca1"]
-
 [node name="Ocean" type="Area3D" unique_id=1607694153]
 collision_layer = 2
 collision_mask = 2
@@ -54,6 +52,3 @@ surface_material_override/0 = SubResource("ShaderMaterial_mkrdd")
 [node name="Ocean_Col" type="CollisionShape3D" parent="." unique_id=1178343058]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
 shape = SubResource("WorldBoundaryShape3D_sberu")
-
-[node name="Ocean_Environment" type="WorldEnvironment" parent="." unique_id=456350421]
-environment = SubResource("Environment_6nca1")

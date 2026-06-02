@@ -21,7 +21,7 @@ noise = SubResource("FastNoiseLite_sberu")
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mkrdd"]
 render_priority = 0
 shader = ExtResource("1_6nca1")
-shader_parameter/albedo = Color(0.29803923, 0.16862746, 0.80784315, 1)
+shader_parameter/albedo = Color(0.3226084, 0.19480473, 0.86513245, 1)
 shader_parameter/water_texture1 = SubResource("NoiseTexture2D_mkrdd")
 shader_parameter/water_texture2 = SubResource("NoiseTexture2D_ogecq")
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_20fyr")
@@ -35,7 +35,7 @@ shader_parameter/wave_scale = 0.02
 shader_parameter/pixelation_level = 64
 shader_parameter/FoamSize = 0.5
 shader_parameter/WaterOpacity = 0.95
-shader_parameter/FoamGlowIntensity = 0.5
+shader_parameter/FoamGlowIntensity = 0.8
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_sberu"]
 

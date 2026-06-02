@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://dojti0umnc24h"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vyht1"]
+size = Vector3(150, 5, 70)
+
+[node name="FishingZone" type="Area3D" unique_id=405863388]
+
+[node name="FishingZoneMain" type="CollisionShape3D" parent="." unique_id=1165200089]
+transform = Transform3D(-0.76435894, 0, 0.64479095, 0, 1, 0, -0.64479095, 0, -0.76435894, 2.105179, 0, -2.9625096)
+shape = SubResource("BoxShape3D_vyht1")
+
+[node name="FishingZoneLeft" type="CollisionShape3D" parent="." unique_id=798172247]
+transform = Transform3D(-0.616665, 0, -0.78722566, 0, 1, 0, 0.78722566, 0, -0.616665, 96.98056, 0, 22.621479)
+shape = SubResource("BoxShape3D_vyht1")
+
+[node name="FishingZoneRight" type="CollisionShape3D" parent="." unique_id=447620993]
+transform = Transform3D(-0.6858692, 0, -0.72772485, 0, 1, 0, 0.72772485, 0, -0.6858692, -47.497322, 0, -95.664825)
+shape = SubResource("BoxShape3D_vyht1")

@@ -19,7 +19,6 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if mark_player_hand == null:
 		return
-	print("passing")
 	global_transform = mark_player_hand.global_transform
 	
 

@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://b0hd6gmojhk1k"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_l8v81"]
+size = Vector3(80, 38.816406, 10)
+
+[node name="Walls" type="Node3D" unique_id=645140226]
+visible = false
+
+[node name="InvisWall" type="StaticBody3D" parent="." unique_id=68443295]
+transform = Transform3D(0.9962372, 0, -0.08666893, 0, 1, 0, 0.08666893, 0, 0.9962372, 100.54332, 33.43744, 166.39824)
+collision_layer = 16
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InvisWall" unique_id=2081854415]
+transform = Transform3D(0.6809637, 0, -0.7323172, 0, 1, 0, 0.7323172, 0, 0.6809637, 0, 0, 0)
+shape = SubResource("BoxShape3D_l8v81")
+
+[node name="InvisWall2" type="StaticBody3D" parent="." unique_id=1348522541]
+transform = Transform3D(0.38379583, 0, 0.92341805, 0, 1, 0, -0.92341805, 0, 0.38379583, 142.26494, 33.43744, 176.98782)
+collision_layer = 16
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InvisWall2" unique_id=1987478935]
+transform = Transform3D(0.6809637, 0, -0.7323172, 0, 1, 0, 0.7323172, 0, 0.6809637, 0, 0, 0)
+shape = SubResource("BoxShape3D_l8v81")
+
+[node name="InvisWall3" type="StaticBody3D" parent="." unique_id=1623860191]
+transform = Transform3D(0.99999833, 0, 0.0018675029, 0, 1, 0, -0.0018675029, 0, 0.99999833, 139.43878, 33.43744, 149.26274)
+collision_layer = 16
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InvisWall3" unique_id=1850168714]
+transform = Transform3D(0.6809637, 0, -0.7323172, 0, 1, 0, 0.7323172, 0, 0.6809637, 0, 0, 0)
+shape = SubResource("BoxShape3D_l8v81")
+
+[node name="InvisWall4" type="StaticBody3D" parent="." unique_id=409761357]
+transform = Transform3D(0.9844451, 0, 0.17569318, 0, 1, 0, -0.17569318, 0, 0.9844451, 83.641716, 33.43744, 98.587425)
+collision_layer = 16
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InvisWall4" unique_id=349440692]
+transform = Transform3D(0.6809637, 0, -0.7323172, 0, 1, 0, 0.7323172, 0, 0.6809637, 0, 0, 0)
+shape = SubResource("BoxShape3D_l8v81")
+
+[node name="InvisWall5" type="StaticBody3D" parent="." unique_id=841053404]
+transform = Transform3D(0.57902503, 0, -0.81530976, 0, 1, 0, 0.81530976, 0, 0.57902503, 78.11309, 33.43744, 127.81074)
+collision_layer = 16
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InvisWall5" unique_id=1419283891]
+transform = Transform3D(0.6809637, 0, -0.7323172, 0, 1, 0, 0.7323172, 0, 0.6809637, 0, 0, 0)
+shape = SubResource("BoxShape3D_l8v81")

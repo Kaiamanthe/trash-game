@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://dojti0umnc24h"]
 
+[ext_resource type="Script" uid="uid://460gpqnngy2x" path="res://Assets/World/MetaZone/hot_spot_manager.gd" id="1_5wujk"]
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_vyht1"]
 size = Vector3(150, 5, 70)
 
@@ -16,3 +18,20 @@ shape = SubResource("BoxShape3D_vyht1")
 [node name="FishingZoneRight" type="CollisionShape3D" parent="." unique_id=447620993]
 transform = Transform3D(-0.6858692, 0, -0.72772485, 0, 1, 0, 0.72772485, 0, -0.6858692, -47.497322, 0, -95.664825)
 shape = SubResource("BoxShape3D_vyht1")
+
+[node name="HotSpotManager" type="Node3D" parent="." unique_id=1948560980]
+script = ExtResource("1_5wujk")
+
+[node name="HotSpot_1" type="Marker3D" parent="HotSpotManager" unique_id=1411139941]
+
+[node name="HotSpot_2" type="Marker3D" parent="HotSpotManager" unique_id=783250812]
+
+[node name="HotSpot_3" type="Marker3D" parent="HotSpotManager" unique_id=909519453]
+
+[node name="HotSpot_4" type="Marker3D" parent="HotSpotManager" unique_id=2054858727]
+
+[node name="HotSpot_5" type="Marker3D" parent="HotSpotManager" unique_id=669307329]
+
+[node name="HotSpot_6" type="Marker3D" parent="HotSpotManager" unique_id=1077204429]
+
+[node name="HotSpot_7" type="Marker3D" parent="HotSpotManager" unique_id=531129764]

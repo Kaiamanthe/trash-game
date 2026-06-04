@@ -97,3 +97,4 @@ data_directory = "res://demo"
 material = SubResource("Terrain3DMaterial_28aoi")
 assets = SubResource("Terrain3DAssets_qw60f")
 top_level = true
+metadata/_edit_lock_ = true

@@ -34,6 +34,8 @@ _data = {
 }
 
 [node name="Player" type="CharacterBody3D" unique_id=1425588007]
+collision_layer = 4
+collision_mask = 0
 script = ExtResource("1_jdblj")
 
 [node name="Player_Col" type="CollisionShape3D" parent="." unique_id=887922135]

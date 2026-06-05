@@ -7,9 +7,9 @@ enum BobberState {
 	on_land
 }
 
-@onready var mark_line_start: Marker3D = $"../FishingPole/Mark_LineStart"
-@onready var mark_bobber_home: Marker3D = $"../FishingPole/Mark_Bobber_Home"
-@onready var bobber_area: Area3D = $Bobber_Area
+@onready var Mark_Line_Start: Marker3D = $"../FishingPole/Mark_LineStart"
+@onready var Mark_Bobber_Home: Marker3D = $"../FishingPole/Mark_Bobber_Home"
+@onready var Bobber_Area: Area3D = $Bobber_Area
 
 var state: BobberState = BobberState.home_pos
 
@@ -31,7 +31,7 @@ func _ready() -> void:
 	max_contacts_reported = 4
 
 	body_entered.connect(_on_body_entered)
-	bobber_area.area_entered.connect(_on_area_entered)
+	Bobber_Area.area_entered.connect(_on_area_entered)
 
 	on_pole_ready()
 
@@ -58,8 +58,8 @@ func on_pole_ready() -> void:
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
 
-	global_position = mark_bobber_home.global_position
-	global_rotation = mark_bobber_home.global_rotation
+	global_position = Mark_Bobber_Home.global_position
+	global_rotation = Mark_Bobber_Home.global_rotation
 
 func on_cast() -> void:
 	state = BobberState.casting
@@ -69,9 +69,9 @@ func on_cast() -> void:
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
 
-	global_position = mark_line_start.global_position
+	global_position = Mark_Line_Start.global_position
 
-	var cast_direction := -mark_line_start.global_basis.z.normalized()
+	var cast_direction := -Mark_Line_Start.global_basis.z.normalized()
 
 	linear_velocity = (
 		cast_direction * _cast_force
@@ -80,12 +80,12 @@ func on_cast() -> void:
 
 func _follow_home_pos(delta: float) -> void:
 	global_position = global_position.lerp(
-		mark_bobber_home.global_position,
+		Mark_Bobber_Home.global_position,
 		delta * _home_follow_speed
 	)
 
 	global_basis = global_basis.slerp(
-		mark_bobber_home.global_basis,
+		Mark_Bobber_Home.global_basis,
 		delta * _home_rotation_speed
 	)
 

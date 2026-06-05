@@ -1,7 +1,7 @@
 extends MeshInstance3D
 
-@onready var mark_line_start: Marker3D = $"../FishingPole/Mark_LineStart"
-@onready var mark_line_end: Marker3D = $"../Bobber/Mark_LineEnd"
+@onready var Mark_Line_Start: Marker3D = $"../FishingPole/Mark_LineStart"
+@onready var Mark_Line_End: Marker3D = $"../Bobber/Mark_LineEnd"
 
 func _ready() -> void:
 	mesh = ImmediateMesh.new()
@@ -16,8 +16,8 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	var start_pos := mark_line_start.global_position
-	var end_pos := mark_line_end.global_position
+	var start_pos := Mark_Line_Start.global_position
+	var end_pos := Mark_Line_End.global_position
 
 	var immediate_mesh := mesh as ImmediateMesh
 	immediate_mesh.clear_surfaces()

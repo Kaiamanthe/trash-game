@@ -14,12 +14,13 @@ enum PlayerState {
 @onready var Fishing_Pole = $"../FishingPole"
 @onready var Camera_Pivot = $Camera_Pivot
 @onready var Hand_Marker: Marker3D = $Camera_Pivot/Mark_Player_Hand
+@onready var Camera: Camera3D = $Camera_Pivot/Camera3D
+@onready var Mark_Line_End: Marker3D = $"../Bobber/Mark_LineEnd"
 
 var state: PlayerState = PlayerState.roaming
 
 var mouse_sensitivity := 0.002
-var free_cam := false
-
+var free_cam := true
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -27,9 +28,8 @@ func _ready():
 	on_cast_started.connect(Fishing_Pole.on_cast_started)
 	on_cast_started.connect(Pole_Animation.on_cast_started)
 
-
 func _unhandled_input(event: InputEvent):
-	if event is InputEventMouseMotion and not free_cam:
+	if event is InputEventMouseMotion and free_cam:
 		rotate_y(-event.relative.x * mouse_sensitivity)
 
 		Camera_Pivot.rotate_x(-event.relative.y * mouse_sensitivity)
@@ -39,13 +39,9 @@ func _unhandled_input(event: InputEvent):
 			deg_to_rad(80)
 		)
 
-
 func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("debug_close"):
 		get_tree().quit()
-
-	if Input.is_action_just_pressed("free_cam"):
-		_toggle_free_cam()
 
 	match state:
 		PlayerState.roaming:
@@ -56,7 +52,6 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-
 func _roaming_state(delta: float) -> void:
 	_apply_gravity(delta)
 	_handle_jump()
@@ -65,10 +60,10 @@ func _roaming_state(delta: float) -> void:
 	if Input.is_action_just_pressed("int_cast"):
 		_enter_fishing_state()
 
-
 func _fishing_state(delta: float) -> void:
 	_apply_gravity(delta)
-
+	_free_cam_off()
+	
 	# Lock WASD
 	velocity.x = move_toward(velocity.x, 0, SPEED)
 	velocity.z = move_toward(velocity.z, 0, SPEED)
@@ -77,29 +72,23 @@ func _fishing_state(delta: float) -> void:
 	if Input.is_action_just_pressed("int_cast"):
 		_exit_fishing_state()
 
-
 func _enter_fishing_state() -> void:
 	state = PlayerState.fishing
 	_cast()
 
-
 func _exit_fishing_state() -> void:
 	state = PlayerState.roaming
 
-
 func _cast() -> void:
 	on_cast_started.emit()
-
 
 func _apply_gravity(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
-
 func _handle_jump() -> void:
 	if Input.is_action_just_pressed("move_jump") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
-
 
 func _handle_movement() -> void:
 	var input_dir := Input.get_vector("move_leftw", "move_rghtw", "move_forw", "move_bckw")
@@ -112,11 +101,7 @@ func _handle_movement() -> void:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 
-
-func _toggle_free_cam() -> void:
-	free_cam = !free_cam
-
-	if free_cam:
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	else:
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+func _free_cam_off() -> void:
+	free_cam = false
+	self.look_at(Mark_Line_End.global_position, Vector3.UP)
+	

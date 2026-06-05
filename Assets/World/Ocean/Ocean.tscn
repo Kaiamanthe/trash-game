@@ -40,30 +40,23 @@ shader_parameter/FoamGlowIntensity = 0.8
 [sub_resource type="PlaneMesh" id="PlaneMesh_u0idy"]
 size = Vector2(1000, 1000)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0b24v"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6nca1"]
 transparency = 1
-albedo_color = Color(0.29411766, 0.16862746, 0.8, 0.78431374)
+albedo_color = Color(0.37532002, 0.09939813, 0.78308314, 0.78431374)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_6nca1"]
 size = Vector2(1000, 1000)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6nca1"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0b24v"]
 transparency = 1
-albedo_color = Color(0.26666668, 0.14509805, 0.7372549, 0.8627451)
+albedo_color = Color(0.3764706, 0.09803922, 0.78431374, 0.8627451)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_0b24v"]
 size = Vector2(1000, 1000)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hxv0y"]
-transparency = 1
-albedo_color = Color(0.2509804, 0.13333334, 0.69411767, 0.9411765)
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_hxv0y"]
-size = Vector2(1000, 1000)
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3ha5a"]
 transparency = 1
-albedo_color = Color(0.2509804, 0.13333334, 0.69411767, 1)
+albedo_color = Color(0.3764706, 0.09803922, 0.78431374, 0.9411765)
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_sberu"]
 
@@ -78,30 +71,23 @@ skin = SubResource("Skin_20fyr")
 surface_material_override/0 = SubResource("ShaderMaterial_mkrdd")
 
 [node name="Ocean_Mesh2" type="MeshInstance3D" parent="." unique_id=977130629]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
 layers = 3
 mesh = SubResource("PlaneMesh_u0idy")
 skin = SubResource("Skin_20fyr")
-surface_material_override/0 = SubResource("StandardMaterial3D_0b24v")
+surface_material_override/0 = SubResource("StandardMaterial3D_6nca1")
 
-[node name="Ocean_Mesh3" type="MeshInstance3D" parent="." unique_id=719978224]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7, 0)
+[node name="Ocean_Mesh3" type="MeshInstance3D" parent="." unique_id=1422093233]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -12, 0)
 layers = 3
 mesh = SubResource("PlaneMesh_6nca1")
 skin = SubResource("Skin_20fyr")
-surface_material_override/0 = SubResource("StandardMaterial3D_6nca1")
+surface_material_override/0 = SubResource("StandardMaterial3D_0b24v")
 
-[node name="Ocean_Mesh4" type="MeshInstance3D" parent="." unique_id=324235179]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+[node name="Ocean_Mesh4" type="MeshInstance3D" parent="." unique_id=1966241660]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -14, 0)
 layers = 3
 mesh = SubResource("PlaneMesh_0b24v")
-skin = SubResource("Skin_20fyr")
-surface_material_override/0 = SubResource("StandardMaterial3D_hxv0y")
-
-[node name="Ocean_Mesh5" type="MeshInstance3D" parent="." unique_id=1157435894]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -12, 0)
-layers = 3
-mesh = SubResource("PlaneMesh_hxv0y")
 skin = SubResource("Skin_20fyr")
 surface_material_override/0 = SubResource("StandardMaterial3D_3ha5a")
 

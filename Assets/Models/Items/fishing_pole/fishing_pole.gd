@@ -8,7 +8,6 @@ signal on_cast
 
 func _ready() -> void:
 	on_pole_ready.connect(Bobber.on_pole_ready)
-
 	on_cast.connect(Bobber.on_cast)
 
 	on_pole_ready.emit()
@@ -16,8 +15,11 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if Mark_Player_Hand == null:
 		return
-	global_transform = Mark_Player_Hand.global_transform
-	
 
-func on_cast_started():
+	global_transform = Mark_Player_Hand.global_transform
+
+func on_cast_started() -> void:
 	on_cast.emit()
+
+func on_reel_started() -> void:
+	on_pole_ready.emit()

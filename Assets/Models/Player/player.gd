@@ -4,6 +4,7 @@ const SPEED = 5.0
 const JUMP_VELOCITY = 6.5
 
 signal on_cast_started
+signal on_reel_started
 
 enum PlayerState {
 	roaming,
@@ -27,6 +28,8 @@ func _ready():
 
 	on_cast_started.connect(Fishing_Pole.on_cast_started)
 	on_cast_started.connect(Pole_Animation.on_cast_started)
+
+	on_reel_started.connect(Fishing_Pole.on_reel_started)
 
 func _unhandled_input(event: InputEvent):
 	if event is InputEventMouseMotion and free_cam:
@@ -68,9 +71,9 @@ func _fishing_state(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, 0, SPEED)
 	velocity.z = move_toward(velocity.z, 0, SPEED)
 
-	# Tempt state exit
-	if Input.is_action_just_pressed("int_cast"):
-		_exit_fishing_state()
+	# Right click reel
+	if Input.is_action_just_pressed("int_reel"):
+		_reel()
 
 func _enter_fishing_state() -> void:
 	state = PlayerState.fishing
@@ -78,9 +81,14 @@ func _enter_fishing_state() -> void:
 
 func _exit_fishing_state() -> void:
 	state = PlayerState.roaming
+	free_cam = true
 
 func _cast() -> void:
 	on_cast_started.emit()
+
+func _reel() -> void:
+	on_reel_started.emit()
+	_exit_fishing_state()
 
 func _apply_gravity(delta: float) -> void:
 	if not is_on_floor():
@@ -103,5 +111,16 @@ func _handle_movement() -> void:
 
 func _free_cam_off() -> void:
 	free_cam = false
-	self.look_at(Mark_Line_End.global_position, Vector3.UP)
-	
+
+	var look_target := Mark_Line_End.global_position
+	look_target.y = global_position.y
+
+	var direction := look_target - global_position
+
+	if direction.length() <= 0.01:
+		return
+
+	var target_basis := Transform3D().looking_at(direction.normalized(), Vector3.UP).basis
+	global_basis = global_basis.slerp(target_basis, 0.15)
+
+	Camera_Pivot.rotation.x = lerp(Camera_Pivot.rotation.x, 0.0, 0.15)

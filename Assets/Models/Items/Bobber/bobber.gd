@@ -7,6 +7,8 @@ enum BobberState {
 	on_land
 }
 
+signal fish_prox_change(prox_text: String, closest_hotspot: Area3D)
+
 @onready var Mark_Line_Start: Marker3D = $"../FishingPole/Mark_LineStart"
 @onready var Mark_Bobber_Home: Marker3D = $"../FishingPole/Mark_Bobber_Home"
 @onready var Bobber_Area: Area3D = $Bobber_Area
@@ -15,6 +17,9 @@ var state: BobberState = BobberState.home_pos
 
 var buoyancy_time := 0.0
 var water_anchor_position := Vector3.ZERO
+
+var nearby_hotspots: Array[Area3D] = []
+var closest_hotspot: Area3D = null
 
 const _cast_force := 18.0
 const _cast_up_force := 5.0
@@ -26,15 +31,19 @@ const _water_damping := 2.5
 const _water_bob_speed := 2.0
 const _water_bob_amount := 0.15
 
+const _closest_dis := 3.0
+const _close_dis := 7.0
+
 func _ready() -> void:
 	contact_monitor = true
 	max_contacts_reported = 4
 
 	body_entered.connect(_on_body_entered)
+
 	Bobber_Area.area_entered.connect(_on_area_entered)
+	Bobber_Area.area_exited.connect(_on_bobber_area_exited)
 
 	on_pole_ready()
-
 func _physics_process(delta: float) -> void:
 	match state:
 		BobberState.home_pos:
@@ -122,12 +131,63 @@ func _on_body_entered(body) -> void:
 		return
 
 func _on_area_entered(area: Area3D) -> void:
-	if state != BobberState.casting:
+	if state == BobberState.casting:
+		if _is_on_layer(area, sheets_globals.water_layer):
+			_enter_water()
+			return
+
+	if area.is_in_group("fish_hotspot"):
+		if not nearby_hotspots.has(area):
+			nearby_hotspots.append(area)
+
+		if state == BobberState.in_water:
+			_update_fish_heat()
+
+func _on_bobber_area_exited(area: Area3D) -> void:
+	if area.is_in_group("fish_hotspot"):
+		nearby_hotspots.erase(area)
+
+		if closest_hotspot == area:
+			closest_hotspot = null
+
+		if state == BobberState.in_water:
+			_update_fish_heat()
+
+func _update_fish_heat() -> void:
+	closest_hotspot = _get_closest_hotspot()
+
+	if closest_hotspot == null:
+		fish_prox_change.emit("Cold", null)
+		print("Fish indicator: Cold")
 		return
 
-	if _is_on_layer(area, sheets_globals.water_layer):
-		_enter_water()
-		return
+	var distance := global_position.distance_to(closest_hotspot.global_position)
+
+	if distance <= _closest_dis:
+		fish_prox_change.emit("Hot", closest_hotspot)
+		print("Fish indicator: Hot")
+	elif distance <= _close_dis:
+		fish_prox_change.emit("Warm", closest_hotspot)
+		print("Fish indicator: Warm")
+	else:
+		fish_prox_change.emit("Cold", closest_hotspot)
+		print("Fish indicator: Cold")
+
+func _get_closest_hotspot() -> Area3D:
+	var closest: Area3D = null
+	var closest_distance := INF
+
+	for hotspot in nearby_hotspots:
+		if hotspot == null:
+			continue
+
+		var distance := global_position.distance_to(hotspot.global_position)
+
+		if distance < closest_distance:
+			closest_distance = distance
+			closest = hotspot
+
+	return closest
 
 func _enter_water() -> void:
 	state = BobberState.in_water

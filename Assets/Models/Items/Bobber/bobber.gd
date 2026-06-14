@@ -4,14 +4,17 @@ enum BobberState {
 	home_pos,
 	casting,
 	in_water,
-	on_land
+	on_land,
+	hooked
 }
 
 signal fish_prox_change(prox_text: String, closest_hotspot: Area3D)
+signal fish_bite_requested(difficulty_text: String, closest_hotspot: Area3D)
 
 @onready var Mark_Line_Start: Marker3D = $"../FishingPole/Mark_LineStart"
 @onready var Mark_Bobber_Home: Marker3D = $"../FishingPole/Mark_Bobber_Home"
 @onready var Bobber_Area: Area3D = $Bobber_Area
+@onready var Bobber_Mesh: Node3D = $Bobber_Mesh
 
 var state: BobberState = BobberState.home_pos
 
@@ -20,6 +23,10 @@ var water_anchor_position := Vector3.ZERO
 
 var nearby_hotspots: Array[Area3D] = []
 var closest_hotspot: Area3D = null
+
+var bite_roll_timer := 0.0
+var bite_roll_interval := 3.0
+var bite_active := false
 
 const _cast_force := 18.0
 const _cast_up_force := 5.0
@@ -31,8 +38,9 @@ const _water_damping := 2.5
 const _water_bob_speed := 2.0
 const _water_bob_amount := 0.15
 
-const _closest_dis := 3.0
-const _close_dis := 7.0
+const _closest_dis := 5.0
+const _closer_dis := 10.0
+const _close_dis := 15.0
 
 func _ready() -> void:
 	contact_monitor = true
@@ -58,8 +66,12 @@ func _physics_process(delta: float) -> void:
 		BobberState.in_water:
 			_float_in_water(delta)
 			_update_fish_heat()
+			_process_bite_roll(delta)
 
 		BobberState.on_land:
+			pass
+
+		BobberState.hooked:
 			pass
 
 func on_pole_ready() -> void:
@@ -73,6 +85,11 @@ func on_pole_ready() -> void:
 
 	nearby_hotspots.clear()
 	closest_hotspot = null
+
+	bite_roll_timer = 0.0
+	bite_active = false
+
+	Bobber_Mesh.visible = true
 
 	global_position = Mark_Bobber_Home.global_position
 	global_rotation = Mark_Bobber_Home.global_rotation
@@ -88,6 +105,11 @@ func on_cast() -> void:
 	nearby_hotspots.clear()
 	closest_hotspot = null
 
+	bite_roll_timer = 0.0
+	bite_active = false
+
+	Bobber_Mesh.visible = true
+
 	global_position = Mark_Line_Start.global_position
 
 	var cast_direction := -Mark_Line_Start.global_basis.z.normalized()
@@ -97,10 +119,32 @@ func on_cast() -> void:
 		+ Vector3.UP * _cast_up_force
 	)
 
+func start_hooked_mode() -> void:
+	state = BobberState.hooked
+
+	freeze = true
+	linear_velocity = Vector3.ZERO
+	angular_velocity = Vector3.ZERO
+
+	bite_active = true
+	Bobber_Mesh.visible = false
+
+	print("Bobber entered hooked mode.")
+
+func end_hooked_mode() -> void:
+	Bobber_Mesh.visible = true
+	on_pole_ready()
+
+func set_hooked_position(new_position: Vector3) -> void:
+	if state != BobberState.hooked:
+		return
+
+	global_position = new_position
+
 func _follow_home_pos(delta: float) -> void:
 	var current_basis := global_basis.orthonormalized()
 	var target_basis := Mark_Bobber_Home.global_basis.orthonormalized()
-	
+
 	global_position = global_position.lerp(
 		Mark_Bobber_Home.global_position,
 		delta * _home_follow_speed
@@ -109,7 +153,7 @@ func _follow_home_pos(delta: float) -> void:
 	global_basis = current_basis.slerp(
 		target_basis,
 		delta * _home_rotation_speed
-	)
+	).orthonormalized()
 
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
@@ -135,6 +179,24 @@ func _float_in_water(delta: float) -> void:
 
 	linear_velocity.y = 0.0
 
+func _process_bite_roll(delta: float) -> void:
+	if bite_active:
+		return
+
+	if closest_hotspot == null:
+		bite_roll_timer = 0.0
+		return
+
+	bite_roll_timer += delta
+
+	if bite_roll_timer < bite_roll_interval:
+		return
+
+	bite_roll_timer = 0.0
+
+	var distance := global_position.distance_to(closest_hotspot.global_position)
+	_try_bite(distance)
+
 func _on_body_entered(body) -> void:
 	if state != BobberState.casting:
 		return
@@ -144,8 +206,6 @@ func _on_body_entered(body) -> void:
 		return
 
 func _on_area_entered(area: Area3D) -> void:
-	print("Bobber_Area touched area: ", area.name)
-
 	if state == BobberState.casting:
 		if _is_on_layer(area, sheets_globals.water_layer):
 			print("Bobber entered water area.")
@@ -153,8 +213,6 @@ func _on_area_entered(area: Area3D) -> void:
 			return
 
 	if _is_fish_hotspot(area):
-		print("Fish hotspot entered bobber radius: ", area.name)
-
 		if not nearby_hotspots.has(area):
 			nearby_hotspots.append(area)
 
@@ -162,11 +220,7 @@ func _on_area_entered(area: Area3D) -> void:
 			_update_fish_heat()
 
 func _on_bobber_area_exited(area: Area3D) -> void:
-	print("Bobber_Area exited area: ", area.name)
-
 	if _is_fish_hotspot(area):
-		print("Fish hotspot exited bobber radius: ", area.name)
-
 		nearby_hotspots.erase(area)
 
 		if closest_hotspot == area:
@@ -182,20 +236,63 @@ func _update_fish_heat() -> void:
 
 	if closest_hotspot == null:
 		fish_prox_change.emit("Cold", null)
-		print("Fish indicator: Cold | hotspots inside bobber area: 0")
 		return
 
 	var distance := global_position.distance_to(closest_hotspot.global_position)
 
 	if distance <= _closest_dis:
-		fish_prox_change.emit("Hot", closest_hotspot)
-		print("Fish indicator: Hot | closest: ", closest_hotspot.name, " | distance: ", distance)
+		fish_prox_change.emit("Closest", closest_hotspot)
+		print("Fish indicator: Closest | closest: ", closest_hotspot.name, " | distance: ", distance)
+	elif distance <= _closer_dis:
+		fish_prox_change.emit("Closer", closest_hotspot)
+		print("Fish indicator: Closer | closest: ", closest_hotspot.name, " | distance: ", distance)
 	elif distance <= _close_dis:
-		fish_prox_change.emit("Warm", closest_hotspot)
-		print("Fish indicator: Warm | closest: ", closest_hotspot.name, " | distance: ", distance)
+		fish_prox_change.emit("Close", closest_hotspot)
+		print("Fish indicator: Close | closest: ", closest_hotspot.name, " | distance: ", distance)
 	else:
 		fish_prox_change.emit("Cold", closest_hotspot)
-		print("Fish indicator: Cold | closest: ", closest_hotspot.name, " | distance: ", distance)
+
+func _try_bite(distance: float) -> void:
+	var bite_chance := 0.0
+	var easy_chance := 0.0
+	var medium_chance := 0.0
+
+	if distance <= _closest_dis:
+		bite_chance = 0.80
+		easy_chance = 0.35
+		medium_chance = 0.40
+	elif distance <= _closer_dis:
+		bite_chance = 0.50
+		easy_chance = 0.50
+		medium_chance = 0.40
+	elif distance <= _close_dis:
+		bite_chance = 0.25
+		easy_chance = 0.65
+		medium_chance = 0.30
+	else:
+		return
+
+	var bite_roll := randf()
+	print("Bite roll: ", bite_roll, " | needed <= ", bite_chance)
+
+	if bite_roll > bite_chance:
+		print("No bite.")
+		return
+
+	var difficulty_roll := randf()
+	var difficulty_text := "easy"
+
+	if difficulty_roll < easy_chance:
+		difficulty_text = "easy"
+	elif difficulty_roll < easy_chance + medium_chance:
+		difficulty_text = "medium"
+	else:
+		difficulty_text = "hard"
+
+	bite_active = true
+
+	print("Fish bite! Difficulty: ", difficulty_text)
+	fish_bite_requested.emit(difficulty_text, closest_hotspot)
 
 func _refresh_nearby_hotspots() -> void:
 	nearby_hotspots.clear()

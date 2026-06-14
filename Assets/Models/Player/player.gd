@@ -5,6 +5,7 @@ const JUMP_VELOCITY = 6.5
 
 signal on_cast_started
 signal on_reel_started
+signal fish_input_pressed(action_name: String)
 
 enum PlayerState {
 	roaming,
@@ -13,6 +14,8 @@ enum PlayerState {
 
 @onready var Pole_Animation = $Player_AnimationPlayer
 @onready var Fishing_Pole = $"../FishingPole"
+@onready var Bobber: RigidBody3D = $"../Bobber"
+@onready var FishHooked: Node3D = $"../FishHooked"
 @onready var Camera_Pivot = $Camera_Pivot
 @onready var Hand_Marker: Marker3D = $Camera_Pivot/Mark_Player_Hand
 @onready var Camera: Camera3D = $Camera_Pivot/Camera3D
@@ -30,6 +33,11 @@ func _ready():
 	on_cast_started.connect(Pole_Animation.on_cast_started)
 
 	on_reel_started.connect(Fishing_Pole.on_reel_started)
+	on_reel_started.connect(FishHooked.release_fish)
+
+	fish_input_pressed.connect(FishHooked.on_player_fish_input)
+
+	Bobber.fish_bite_requested.connect(FishHooked.start_fish_bite)
 
 func _unhandled_input(event: InputEvent):
 	if event is InputEventMouseMotion and free_cam:
@@ -66,14 +74,27 @@ func _roaming_state(delta: float) -> void:
 func _fishing_state(delta: float) -> void:
 	_apply_gravity(delta)
 	_free_cam_off()
-	
-	# Lock WASD
+
 	velocity.x = move_toward(velocity.x, 0, SPEED)
 	velocity.z = move_toward(velocity.z, 0, SPEED)
 
-	# Right click reel
+	_handle_fish_input()
+
 	if Input.is_action_just_pressed("int_reel"):
 		_reel()
+
+func _handle_fish_input() -> void:
+	if Input.is_action_just_pressed("move_leftw"):
+		fish_input_pressed.emit("move_leftw")
+
+	if Input.is_action_just_pressed("move_rghtw"):
+		fish_input_pressed.emit("move_rghtw")
+
+	if Input.is_action_just_pressed("move_forw"):
+		fish_input_pressed.emit("move_forw")
+
+	if Input.is_action_just_pressed("move_bckw"):
+		fish_input_pressed.emit("move_bckw")
 
 func _enter_fishing_state() -> void:
 	state = PlayerState.fishing
@@ -121,6 +142,10 @@ func _free_cam_off() -> void:
 		return
 
 	var target_basis := Transform3D().looking_at(direction.normalized(), Vector3.UP).basis
-	global_basis = global_basis.slerp(target_basis, 0.15)
+
+	global_basis = global_basis.orthonormalized().slerp(
+		target_basis.orthonormalized(),
+		0.15
+	).orthonormalized()
 
 	Camera_Pivot.rotation.x = lerp(Camera_Pivot.rotation.x, 0.0, 0.15)

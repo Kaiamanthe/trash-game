@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://2iaisbewifl7" path="res://Assets/Models/Items/fishing_pole/fishing_pole.tscn" id="4_jnlp7"]
 [ext_resource type="Script" uid="uid://55vspc0c1n1y" path="res://Assets/Models/Items/fishing_pole/line.gd" id="5_l8v81"]
 [ext_resource type="PackedScene" uid="uid://dojti0umnc24h" path="res://Assets/World/MetaZone/fishing_zone.tscn" id="8_bf3um"]
+[ext_resource type="Script" uid="uid://o4iqqv0wkbc6" path="res://fish_hooked.gd" id="10_tw3kd"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bf3um"]
 shader = ExtResource("3_vyht1")
@@ -86,4 +87,7 @@ mesh = SubResource("ImmediateMesh_vyht1")
 script = ExtResource("5_l8v81")
 
 [node name="FishingZone" parent="." unique_id=405863388 instance=ExtResource("8_bf3um")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 107.73054, 15, 165.69682)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96.23949, 15, 172.91966)
+
+[node name="FishHooked" type="Node3D" parent="." unique_id=1522046948]
+script = ExtResource("10_tw3kd")

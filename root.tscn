@@ -86,4 +86,4 @@ mesh = SubResource("ImmediateMesh_vyht1")
 script = ExtResource("5_l8v81")
 
 [node name="FishingZone" parent="." unique_id=405863388 instance=ExtResource("8_bf3um")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.995, 15, 201.556)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 107.73054, 15, 165.69682)

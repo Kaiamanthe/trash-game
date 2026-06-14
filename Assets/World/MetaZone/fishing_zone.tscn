@@ -2,36 +2,68 @@
 
 [ext_resource type="Script" uid="uid://460gpqnngy2x" path="res://Assets/World/MetaZone/hot_spot_manager.gd" id="1_5wujk"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_5wujk"]
+size = Vector3(80, 5, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ruefi"]
+size = Vector3(50, 5, 20)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_vyht1"]
-size = Vector3(150, 5, 70)
+size = Vector3(50, 5, 20)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5wujk"]
 
 [node name="FishingZone" type="Area3D" unique_id=405863388]
 
 [node name="FishingZoneMain" type="CollisionShape3D" parent="." unique_id=1165200089]
-transform = Transform3D(-0.76435894, 0, 0.64479095, 0, 1, 0, -0.64479095, 0, -0.76435894, 2.105179, 0, -2.9625096)
-shape = SubResource("BoxShape3D_vyht1")
+transform = Transform3D(-0.76435894, 0, 0.64479095, 0, 1, 0, -0.64479095, 0, -0.76435894, 0, 0, 0)
+shape = SubResource("BoxShape3D_5wujk")
 
 [node name="FishingZoneLeft" type="CollisionShape3D" parent="." unique_id=798172247]
-transform = Transform3D(-0.616665, 0, -0.78722566, 0, 1, 0, 0.78722566, 0, -0.616665, 96.98056, 0, 22.621479)
-shape = SubResource("BoxShape3D_vyht1")
+transform = Transform3D(-0.65547925, 0, -0.7552131, 0, 1, 0, 0.7552131, 0, -0.65547925, 47.99763, 0, 21.227818)
+shape = SubResource("BoxShape3D_ruefi")
 
 [node name="FishingZoneRight" type="CollisionShape3D" parent="." unique_id=447620993]
-transform = Transform3D(-0.6858692, 0, -0.72772485, 0, 1, 0, 0.72772485, 0, -0.6858692, -47.497322, 0, -95.664825)
+transform = Transform3D(-0.63968056, 0, -0.76864094, 0, 1, 0, 0.76864094, 0, -0.63968056, -28.709023, 0, -43.221004)
 shape = SubResource("BoxShape3D_vyht1")
 
 [node name="HotSpotManager" type="Node3D" parent="." unique_id=1948560980]
 script = ExtResource("1_5wujk")
 
-[node name="HotSpot_1" type="Marker3D" parent="HotSpotManager" unique_id=1411139941]
+[node name="HotSpot_1" type="Area3D" parent="HotSpotManager" unique_id=194467056]
 
-[node name="HotSpot_2" type="Marker3D" parent="HotSpotManager" unique_id=783250812]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HotSpotManager/HotSpot_1" unique_id=1421937741]
+shape = SubResource("CapsuleShape3D_5wujk")
 
-[node name="HotSpot_3" type="Marker3D" parent="HotSpotManager" unique_id=909519453]
+[node name="HotSpot_2" type="Area3D" parent="HotSpotManager" unique_id=1769825582]
 
-[node name="HotSpot_4" type="Marker3D" parent="HotSpotManager" unique_id=2054858727]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HotSpotManager/HotSpot_2" unique_id=1917424708]
+shape = SubResource("CapsuleShape3D_5wujk")
 
-[node name="HotSpot_5" type="Marker3D" parent="HotSpotManager" unique_id=669307329]
+[node name="HotSpot_3" type="Area3D" parent="HotSpotManager" unique_id=1838311126]
 
-[node name="HotSpot_6" type="Marker3D" parent="HotSpotManager" unique_id=1077204429]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HotSpotManager/HotSpot_3" unique_id=1246481416]
+shape = SubResource("CapsuleShape3D_5wujk")
 
-[node name="HotSpot_7" type="Marker3D" parent="HotSpotManager" unique_id=531129764]
+[node name="HotSpot_4" type="Area3D" parent="HotSpotManager" unique_id=848680364]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HotSpotManager/HotSpot_4" unique_id=1071574585]
+shape = SubResource("CapsuleShape3D_5wujk")
+
+[node name="HotSpot_5" type="Area3D" parent="HotSpotManager" unique_id=1429824836]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HotSpotManager/HotSpot_5" unique_id=157731401]
+shape = SubResource("CapsuleShape3D_5wujk")
+
+[node name="HotSpot_6" type="Area3D" parent="HotSpotManager" unique_id=1180043351]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HotSpotManager/HotSpot_6" unique_id=1562574302]
+shape = SubResource("CapsuleShape3D_5wujk")
+
+[node name="HotSpot_7" type="Area3D" parent="HotSpotManager" unique_id=1063601149]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HotSpotManager/HotSpot_7" unique_id=134586447]
+shape = SubResource("CapsuleShape3D_5wujk")
+
+[node name="Timer" type="Timer" parent="." unique_id=1928150306]
+wait_time = 30.0

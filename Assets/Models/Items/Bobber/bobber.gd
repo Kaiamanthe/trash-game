@@ -40,10 +40,13 @@ func _ready() -> void:
 
 	body_entered.connect(_on_body_entered)
 
+	Bobber_Area.monitoring = true
+	Bobber_Area.monitorable = true
 	Bobber_Area.area_entered.connect(_on_area_entered)
 	Bobber_Area.area_exited.connect(_on_bobber_area_exited)
 
 	on_pole_ready()
+
 func _physics_process(delta: float) -> void:
 	match state:
 		BobberState.home_pos:
@@ -54,6 +57,7 @@ func _physics_process(delta: float) -> void:
 
 		BobberState.in_water:
 			_float_in_water(delta)
+			_update_fish_heat()
 
 		BobberState.on_land:
 			pass
@@ -67,6 +71,9 @@ func on_pole_ready() -> void:
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
 
+	nearby_hotspots.clear()
+	closest_hotspot = null
+
 	global_position = Mark_Bobber_Home.global_position
 	global_rotation = Mark_Bobber_Home.global_rotation
 
@@ -78,6 +85,9 @@ func on_cast() -> void:
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
 
+	nearby_hotspots.clear()
+	closest_hotspot = null
+
 	global_position = Mark_Line_Start.global_position
 
 	var cast_direction := -Mark_Line_Start.global_basis.z.normalized()
@@ -88,13 +98,16 @@ func on_cast() -> void:
 	)
 
 func _follow_home_pos(delta: float) -> void:
+	var current_basis := global_basis.orthonormalized()
+	var target_basis := Mark_Bobber_Home.global_basis.orthonormalized()
+	
 	global_position = global_position.lerp(
 		Mark_Bobber_Home.global_position,
 		delta * _home_follow_speed
 	)
 
-	global_basis = global_basis.slerp(
-		Mark_Bobber_Home.global_basis,
+	global_basis = current_basis.slerp(
+		target_basis,
 		delta * _home_rotation_speed
 	)
 
@@ -131,12 +144,17 @@ func _on_body_entered(body) -> void:
 		return
 
 func _on_area_entered(area: Area3D) -> void:
+	print("Bobber_Area touched area: ", area.name)
+
 	if state == BobberState.casting:
 		if _is_on_layer(area, sheets_globals.water_layer):
+			print("Bobber entered water area.")
 			_enter_water()
 			return
 
-	if area.is_in_group("fish_hotspot"):
+	if _is_fish_hotspot(area):
+		print("Fish hotspot entered bobber radius: ", area.name)
+
 		if not nearby_hotspots.has(area):
 			nearby_hotspots.append(area)
 
@@ -144,7 +162,11 @@ func _on_area_entered(area: Area3D) -> void:
 			_update_fish_heat()
 
 func _on_bobber_area_exited(area: Area3D) -> void:
-	if area.is_in_group("fish_hotspot"):
+	print("Bobber_Area exited area: ", area.name)
+
+	if _is_fish_hotspot(area):
+		print("Fish hotspot exited bobber radius: ", area.name)
+
 		nearby_hotspots.erase(area)
 
 		if closest_hotspot == area:
@@ -154,24 +176,35 @@ func _on_bobber_area_exited(area: Area3D) -> void:
 			_update_fish_heat()
 
 func _update_fish_heat() -> void:
+	_refresh_nearby_hotspots()
+
 	closest_hotspot = _get_closest_hotspot()
 
 	if closest_hotspot == null:
 		fish_prox_change.emit("Cold", null)
-		print("Fish indicator: Cold")
+		print("Fish indicator: Cold | hotspots inside bobber area: 0")
 		return
 
 	var distance := global_position.distance_to(closest_hotspot.global_position)
 
 	if distance <= _closest_dis:
 		fish_prox_change.emit("Hot", closest_hotspot)
-		print("Fish indicator: Hot")
+		print("Fish indicator: Hot | closest: ", closest_hotspot.name, " | distance: ", distance)
 	elif distance <= _close_dis:
 		fish_prox_change.emit("Warm", closest_hotspot)
-		print("Fish indicator: Warm")
+		print("Fish indicator: Warm | closest: ", closest_hotspot.name, " | distance: ", distance)
 	else:
 		fish_prox_change.emit("Cold", closest_hotspot)
-		print("Fish indicator: Cold")
+		print("Fish indicator: Cold | closest: ", closest_hotspot.name, " | distance: ", distance)
+
+func _refresh_nearby_hotspots() -> void:
+	nearby_hotspots.clear()
+
+	var overlapping_areas := Bobber_Area.get_overlapping_areas()
+
+	for area in overlapping_areas:
+		if _is_fish_hotspot(area):
+			nearby_hotspots.append(area)
 
 func _get_closest_hotspot() -> Area3D:
 	var closest: Area3D = null
@@ -189,6 +222,18 @@ func _get_closest_hotspot() -> Area3D:
 
 	return closest
 
+func _is_fish_hotspot(area: Area3D) -> bool:
+	if area == null:
+		return false
+
+	if area.is_in_group("fish_hotspot"):
+		return true
+
+	if area.name.begins_with("HotSpot_"):
+		return true
+
+	return false
+
 func _enter_water() -> void:
 	state = BobberState.in_water
 
@@ -200,6 +245,9 @@ func _enter_water() -> void:
 
 	linear_velocity *= _water_drag
 
+	print("Bobber is now in water.")
+	_update_fish_heat()
+
 func _land_on_terrain() -> void:
 	state = BobberState.on_land
 
@@ -207,6 +255,8 @@ func _land_on_terrain() -> void:
 
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
+
+	print("Bobber landed on terrain.")
 
 func _is_on_layer(collision_object, layer_number: int) -> bool:
 	if collision_object == null:

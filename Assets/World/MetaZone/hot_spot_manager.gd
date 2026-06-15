@@ -20,6 +20,7 @@ var hotspot_y = sheets_globals.water_level
 	$HotSpot_7
 ]
 
+# Sets up hotspot randomization timer and places hotspots once at start.
 func _ready() -> void:
 	Hotspot_Timer.wait_time = 30.0
 	Hotspot_Timer.one_shot = false
@@ -28,14 +29,17 @@ func _ready() -> void:
 	_mix_hotspot()
 	Hotspot_Timer.start()
 
+# Randomizes hotspot positions whenever the timer finishes.
 func _on_hotspot_timer_timeout() -> void:
 	_mix_hotspot()
 
+# Moves every fish hotspot to a random point inside a random fishing zone.
 func _mix_hotspot() -> void:
 	for hotspot in hotspots:
 		var zone: CollisionShape3D = zones.pick_random()
 		hotspot.global_position = _get_random_point_in_zone(zone)
 
+# Returns a random world position inside the given box-shaped fishing zone.
 func _get_random_point_in_zone(zone: CollisionShape3D) -> Vector3:
 	var shape := zone.shape as BoxShape3D
 	var half_size := shape.size * 0.5
@@ -48,4 +52,5 @@ func _get_random_point_in_zone(zone: CollisionShape3D) -> Vector3:
 
 	var world_point := zone.global_transform * local_point
 	world_point.y = hotspot_y
+
 	return world_point

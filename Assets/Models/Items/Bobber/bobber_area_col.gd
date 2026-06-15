@@ -17,12 +17,14 @@ func _ready() -> void:
 
 	BobberFishUI.hide_all()
 
+# Clears all tracked hotspots and resets UI when fishing starts or ends
 func reset_hotspots() -> void:
 	nearby_hotspots.clear()
 	closest_hotspot = null
 	closest_distance = INF
 	BobberFishUI.hide_all()
 
+# Rebuilds the hotspot list
 func refresh_nearby_hotspots() -> void:
 	nearby_hotspots.clear()
 
@@ -35,15 +37,19 @@ func refresh_nearby_hotspots() -> void:
 
 	_update_closest_hotspot()
 
+# Returns closest hotspot.
 func get_closest_hotspot() -> Area3D:
 	return closest_hotspot
 
+# Returns distance from bobber to nearest hotspot
+# Returns INF if no hotspot is available
 func get_distance_to_closest_hotspot() -> float:
 	if closest_hotspot == null:
 		return INF
 
 	return Bobber.global_position.distance_to(closest_hotspot.global_position)
 
+# Updates fish proximity icon (Close / Closer / Closest)
 func set_proximity_visual(prox_text: String) -> void:
 	BobberFishUI.show_proximity(prox_text)
 
@@ -59,15 +65,19 @@ func show_wrong_direction() -> void:
 func show_reel_guide(expected_action: String = "move_forw") -> void:
 	BobberFishUI.show_reel_guide(expected_action)
 
+# Updates highlighted reel key during the reel sequence
 func show_reel_expected(expected_action: String) -> void:
 	BobberFishUI.show_reel_expected(expected_action)
 
+# Flashes reel guide red
 func show_wrong_reel(next_expected_action: String = "move_forw") -> void:
 	BobberFishUI.show_wrong_reel(next_expected_action)
 
+# Completely hides all fishing UI.
 func hide_fish_ui() -> void:
 	BobberFishUI.hide_all()
 
+# Adds a hotspot when the bobber enters its Area3D
 func _on_area_entered(area: Area3D) -> void:
 	if not _is_fish_hotspot(area):
 		return
@@ -77,6 +87,7 @@ func _on_area_entered(area: Area3D) -> void:
 
 	_update_closest_hotspot()
 
+# Removes a hotspot when the bobber leaves its Area3D
 func _on_area_exited(area: Area3D) -> void:
 	if not _is_fish_hotspot(area):
 		return
@@ -89,6 +100,7 @@ func _on_area_exited(area: Area3D) -> void:
 
 	_update_closest_hotspot()
 
+# Finds the nearest hotspot from all currently tracked hotspots
 func _update_closest_hotspot() -> void:
 	closest_hotspot = null
 	closest_distance = INF
@@ -103,6 +115,7 @@ func _update_closest_hotspot() -> void:
 			closest_distance = distance
 			closest_hotspot = hotspot
 
+# Checks if Area3D is a fish location
 func _is_fish_hotspot(area: Area3D) -> bool:
 	if area == null:
 		return false

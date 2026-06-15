@@ -77,8 +77,6 @@ texture = ExtResource("7_hlc1m")
 [node name="Key_A" type="Sprite3D" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/ReelGuide" unique_id=651285356]
 texture = ExtResource("4_ugo61")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=605549404]
-
 [node name="ShakeTimer" type="Timer" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=1093227785]
 
 [node name="BlinkTimer" type="Timer" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=596665271]

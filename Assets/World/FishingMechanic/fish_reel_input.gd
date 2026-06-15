@@ -13,24 +13,29 @@ var reel_pattern: Array[String] = [
 	"move_leftw"
 ]
 
+# Resets all fishing input progress back to default.
 func reset_all() -> void:
 	fish_tired_meter = 0.0
 	reel_progress = 0.0
 	total_reel_progress = 0.0
 	reel_pattern_index = 0
 
+# Resets only the reel phase progress.
 func reset_reel_phase() -> void:
 	reel_progress = 0.0
 	reel_pattern_index = 0
 
+# Resets progress when the fish recovers and starts swimming again.
 func reset_for_swimming_restart() -> void:
 	fish_tired_meter = 0.0
 	reel_progress = 0.0
 	reel_pattern_index = 0
 
+# Returns the next WASD input expected during the reel phase.
 func get_expected_reel_action() -> String:
 	return reel_pattern[reel_pattern_index]
 
+# Handles A/D input while the fish is swimming.
 func handle_swimming_input(action_name: String, fish_swim_direction: int, FishDifficulty) -> String:
 	var correct_action := ""
 
@@ -41,10 +46,8 @@ func handle_swimming_input(action_name: String, fish_swim_direction: int, FishDi
 
 	if action_name == correct_action:
 		fish_tired_meter += 1.0
-		print("Correct direction. Tired meter: ", fish_tired_meter)
 	else:
 		fish_tired_meter = max(fish_tired_meter - 1.0, 0.0)
-		print("Wrong direction. Tired meter: ", fish_tired_meter)
 		return "wrong"
 
 	if fish_tired_meter >= FishDifficulty.fish_tired_needed:
@@ -52,6 +55,7 @@ func handle_swimming_input(action_name: String, fish_swim_direction: int, FishDi
 
 	return ""
 
+# Handles WASD reel sequence input while the fish is tired.
 func handle_reel_input(action_name: String, FishDifficulty) -> String:
 	var expected_action: String = reel_pattern[reel_pattern_index]
 
@@ -62,8 +66,6 @@ func handle_reel_input(action_name: String, FishDifficulty) -> String:
 			reel_pattern_index = 0
 			reel_progress += 1.0
 			total_reel_progress += 1.0
-
-			print("Reel circle complete. Reel progress: ", reel_progress, " Total: ", total_reel_progress)
 
 			if total_reel_progress >= FishDifficulty.total_reel_needed:
 				return "catch"
@@ -77,7 +79,6 @@ func handle_reel_input(action_name: String, FishDifficulty) -> String:
 
 	if action_name in reel_pattern:
 		reel_pattern_index = 0
-		print("Wrong reel input. Pattern reset.")
 		return "wrong"
 
 	return ""

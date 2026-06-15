@@ -65,6 +65,7 @@ func _process(delta: float) -> void:
 	_face_camera_upright()
 	_process_blink(delta)
 
+# Places direction keys and reel keys into their UI layouts
 func _setup_key_layout() -> void:
 	Direction_Key_A.position = Vector3(-DIRECTION_KEY_SPACING, 0.0, 0.0)
 	Direction_Key_D.position = Vector3(DIRECTION_KEY_SPACING, 0.0, 0.0)
@@ -74,12 +75,14 @@ func _setup_key_layout() -> void:
 	Reel_Key_S.position = Vector3(0.0, REEL_KEY_BOTTOM_Y, 0.0)
 	Reel_Key_D.position = Vector3(REEL_KEY_SPACING_X, REEL_KEY_BOTTOM_Y, 0.0)
 
+# Moves the whole UI so it stays above the bobber
 func _follow_bobber() -> void:
 	if Bobber == null:
 		return
 
 	global_position = Bobber.global_position + Vector3.UP * HEIGHT_ABOVE_BOBBER + shake_offset
 
+# Hide UI reset
 func hide_all() -> void:
 	mode = GuideMode.hidden
 	visible = false
@@ -91,6 +94,7 @@ func hide_all() -> void:
 	active_key = null
 	pending_restore_action = ""
 
+# Shows fish proximity
 func show_proximity(prox_text: String) -> void:
 	if prox_text == "Cold":
 		hide_all()
@@ -116,12 +120,14 @@ func show_proximity(prox_text: String) -> void:
 			ProximityGuide.modulate = COLOR_CLOSEST
 			ProximityGuide.scale = Vector3.ONE * PROX_CLOSEST_SCALE
 
+# Bite shake detection
 func play_bite_check_shake() -> void:
 	if mode != GuideMode.proximity:
 		return
 
 	_shake(0.18, 0.35)
 
+# Shows swim direction guide
 func show_direction_guide(direction: int) -> void:
 	mode = GuideMode.direction
 	visible = true
@@ -260,6 +266,7 @@ func _flash_wrong_direction() -> void:
 			active_key.scale = Vector3.ONE * KEY_ACTIVE_SCALE
 	)
 
+# Flashes WASD keys red wrong input.
 func _flash_wrong_reel() -> void:
 	if flash_tween != null:
 		flash_tween.kill()
@@ -280,6 +287,7 @@ func _flash_wrong_reel() -> void:
 		show_reel_expected(pending_restore_action)
 	)
 
+# Adds a short shake animation
 func _shake(duration: float, strength: float) -> void:
 	if shake_tween != null:
 		shake_tween.kill()

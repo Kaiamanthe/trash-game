@@ -44,6 +44,7 @@ func _process(delta: float) -> void:
 		FishHookedState.fish_reeling_in:
 			_process_fish_reeling_in(delta)
 
+# Starts gameplay
 func start_fish_bite(difficulty_text: String, closest_hotspot: Area3D = null, bite_distance: float = 999.0) -> void:
 	if state != FishHookedState.inactive:
 		return
@@ -60,15 +61,12 @@ func start_fish_bite(difficulty_text: String, closest_hotspot: Area3D = null, bi
 
 	if player_distance < FishDifficulty.fish_start_min_distance:
 		state = FishHookedState.fish_pulling_away
-		print("FishHooked started close to player. Pulling away first.")
 	else:
 		_begin_side_to_side()
 
-	print("FishHooked started. Bite distance: ", bite_distance, " | Difficulty: ", FishDifficulty.difficulty_name)
-	print("Fish swimming direction: ", FishMovement.get_swim_direction())
-
 	fish_bite_started.emit()
 
+# After game resets
 func release_fish() -> void:
 	state = FishHookedState.inactive
 	set_process(false)
@@ -79,9 +77,9 @@ func release_fish() -> void:
 	FishReelInput.reset_all()
 	Bobber_Area_Col.hide_fish_ui()
 
-	print("Fish released / fishing reset.")
 	fish_released.emit()
 
+# Routes player fishing inputs into swimming or reeling logic
 func on_player_fish_input(action_name: String) -> void:
 	match state:
 		FishHookedState.fish_swimming:
@@ -122,15 +120,16 @@ func on_player_fish_input(action_name: String) -> void:
 					FishMovement.pull_fish_closer(FishDifficulty)
 					_restart_fish_swimming()
 
+# Starts movement
 func _begin_side_to_side() -> void:
 	state = FishHookedState.fish_swimming
 	FishMovement.begin_side_to_side()
 
 	Bobber_Area_Col.show_direction_guide(FishMovement.get_swim_direction())
 
-	print("Fish begins parallel side-to-side movement.")
 	fish_swim_started.emit(FishMovement.get_swim_direction())
 
+# Updates fish pull when tired
 func _process_fish_pulling_away(delta: float) -> void:
 	var result: String = FishMovement.process_pulling_away(
 		delta,
@@ -143,6 +142,7 @@ func _process_fish_pulling_away(delta: float) -> void:
 	if result == "side_to_side":
 		_begin_side_to_side()
 
+# Update swimming process
 func _process_fish_swimming(delta: float) -> void:
 	var result: String = FishMovement.process_swimming(
 		delta,
@@ -163,6 +163,7 @@ func _process_fish_swimming(delta: float) -> void:
 			Bobber_Area_Col.show_direction_guide(FishMovement.get_swim_direction())
 			fish_swim_started.emit(FishMovement.get_swim_direction())
 
+# Updates fish tired and reelable
 func _process_fish_tired(delta: float) -> void:
 	var result: String = FishMovement.process_tired(
 		delta,
@@ -178,6 +179,7 @@ func _process_fish_tired(delta: float) -> void:
 		Bobber_Area_Col.hide_fish_ui()
 		fish_caught_reel.emit()
 
+# Auto reel on caught
 func _process_fish_reeling_in(delta: float) -> void:
 	var result: String = FishMovement.process_reeling_in(
 		delta,
@@ -188,6 +190,7 @@ func _process_fish_reeling_in(delta: float) -> void:
 	if result == "caught":
 		_finish_fish_catch()
 
+# Switch movement to reel
 func _start_fish_tired() -> void:
 	state = FishHookedState.fish_tired
 
@@ -196,9 +199,9 @@ func _start_fish_tired() -> void:
 
 	Bobber_Area_Col.show_reel_guide(FishReelInput.get_expected_reel_action())
 
-	print("Fish is tired. Spin WASD in a circle.")
 	fish_tired_started.emit()
 
+# Exit reel to movement
 func _restart_fish_swimming() -> void:
 	state = FishHookedState.fish_swimming
 
@@ -207,9 +210,9 @@ func _restart_fish_swimming() -> void:
 
 	Bobber_Area_Col.show_direction_guide(FishMovement.get_swim_direction())
 
-	print("Fish recovered. Back to parallel side-to-side movement.")
 	fish_swim_started.emit(FishMovement.get_swim_direction())
 
+# Fish caught auto reel and reset ui
 func _catch_fish() -> void:
 	if state == FishHookedState.fish_caught:
 		return
@@ -220,8 +223,7 @@ func _catch_fish() -> void:
 	state = FishHookedState.fish_reeling_in
 	Bobber_Area_Col.hide_fish_ui()
 
-	print("Fish hooked successfully. Reeling in.")
-
+# Reset after catch
 func _finish_fish_catch() -> void:
 	if state == FishHookedState.fish_caught:
 		return
@@ -232,5 +234,4 @@ func _finish_fish_catch() -> void:
 	Bobber.end_hooked_mode()
 	Bobber_Area_Col.hide_fish_ui()
 
-	print("Fish caught.")
 	fish_caught.emit()

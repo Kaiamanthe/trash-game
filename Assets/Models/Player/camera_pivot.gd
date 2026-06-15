@@ -10,14 +10,17 @@ var mouse_sensitivity := 0.002
 
 @onready var Player: CharacterBody3D = get_parent()
 
+# Sets the camera back to normal
 func enter_free_mode() -> void:
 	mode = CameraMode.free
 	rotation.x = 0.0
 
+# Locks the camera
 func enter_fishing_mode() -> void:
 	mode = CameraMode.fishing
 	rotation.x = 0.0
 
+# Handles mouse look while the player is roaming.
 func handle_mouse_motion(event: InputEventMouseMotion) -> void:
 	if mode != CameraMode.free:
 		return
@@ -31,6 +34,7 @@ func handle_mouse_motion(event: InputEventMouseMotion) -> void:
 		deg_to_rad(80)
 	)
 
+# PLayer tracks fish
 func update_fishing_lock(delta: float, target_global_position: Vector3) -> void:
 	if mode != CameraMode.fishing:
 		return
@@ -43,7 +47,10 @@ func update_fishing_lock(delta: float, target_global_position: Vector3) -> void:
 	if direction.length() <= 0.01:
 		return
 
-	var target_basis := Transform3D().looking_at(direction.normalized(), Vector3.UP).basis
+	var target_basis := Transform3D().looking_at(
+		direction.normalized(),
+		Vector3.UP
+	).basis
 
 	Player.global_basis = Player.global_basis.orthonormalized().slerp(
 		target_basis.orthonormalized(),

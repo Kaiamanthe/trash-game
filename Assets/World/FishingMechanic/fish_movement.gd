@@ -12,6 +12,7 @@ var reel_pull_pause_timer := 0.0
 var reel_in_speed := 10.0
 var catch_distance := 1.5
 
+# Resets all fish movement values back to default.
 func reset_all() -> void:
 	fish_anchor_position = Vector3.ZERO
 	fish_side_offset = 0.0
@@ -21,6 +22,7 @@ func reset_all() -> void:
 	direction_change_timer = 0.0
 	reel_pull_pause_timer = 0.0
 
+# Sets the fish starting anchor position when a bite begins.
 func setup_for_bite(bobber_position: Vector3) -> void:
 	fish_anchor_position = bobber_position
 	fish_anchor_position.y = sheets_globals.water_level
@@ -32,18 +34,22 @@ func setup_for_bite(bobber_position: Vector3) -> void:
 	direction_change_timer = 0.0
 	reel_pull_pause_timer = 0.0
 
+# Randomly chooses the fish's initial left or right swim direction.
 func randomize_swim_direction() -> void:
 	if randf() > 0.5:
 		fish_swim_direction = 1
 	else:
 		fish_swim_direction = -1
 
+# Returns the fish's current swim direction.
 func get_swim_direction() -> int:
 	return fish_swim_direction
 
+# Starts the side-to-side swimming phase timer.
 func begin_side_to_side() -> void:
 	direction_change_timer = 0.0
 
+# Moves the fish away from the player before starting side-to-side swimming.
 func process_pulling_away(delta: float, Player: CharacterBody3D, Bobber: RigidBody3D, FishingZone: Node3D, FishDifficulty) -> String:
 	var current_position := get_fish_world_position(Player)
 	var current_distance := Player.global_position.distance_to(current_position)
@@ -69,6 +75,7 @@ func process_pulling_away(delta: float, Player: CharacterBody3D, Bobber: RigidBo
 	Bobber.set_hooked_position(new_position)
 	return ""
 
+# Moves the fish side-to-side while waiting for correct A/D input.
 func process_swimming(delta: float, Player: CharacterBody3D, Bobber: RigidBody3D, FishingZone: Node3D, FishDifficulty) -> String:
 	var result := ""
 
@@ -79,7 +86,6 @@ func process_swimming(delta: float, Player: CharacterBody3D, Bobber: RigidBody3D
 
 		if randf() > 0.7:
 			fish_swim_direction *= -1
-			print("Fish changed direction naturally: ", fish_swim_direction)
 			result = "direction_changed"
 
 	fish_side_offset += fish_swim_direction * FishDifficulty.fish_swim_speed * FishDifficulty.fish_pull_speed * delta
@@ -101,6 +107,7 @@ func process_swimming(delta: float, Player: CharacterBody3D, Bobber: RigidBody3D
 	Bobber.set_hooked_position(new_position)
 	return result
 
+# Moves the tired fish while the player reels it closer.
 func process_tired(delta: float, Player: CharacterBody3D, Bobber: RigidBody3D, FishingZone: Node3D, FishDifficulty) -> String:
 	if reel_pull_pause_timer > 0.0:
 		reel_pull_pause_timer = max(reel_pull_pause_timer - delta, 0.0)
@@ -121,6 +128,7 @@ func process_tired(delta: float, Player: CharacterBody3D, Bobber: RigidBody3D, F
 	Bobber.set_hooked_position(new_position)
 	return ""
 
+# Pulls the hooked fish/bobber toward the player for the final catch.
 func process_reeling_in(delta: float, Player: CharacterBody3D, Bobber: RigidBody3D) -> String:
 	var target_position := Player.global_position
 	target_position.y = 15.0
@@ -148,20 +156,22 @@ func process_reeling_in(delta: float, Player: CharacterBody3D, Bobber: RigidBody
 
 	return ""
 
+# Begins the tired phase from the fish's current distance.
 func start_tired_phase() -> void:
 	reel_pull_pause_timer = 0.0
 	fish_away_target_offset = fish_away_offset
 
+# Pulls the tired fish closer after a successful reel input.
 func pull_fish_closer(FishDifficulty) -> void:
 	fish_away_target_offset = max(fish_away_target_offset - FishDifficulty.reel_pull_amount, 0.0)
 	reel_pull_pause_timer = FishDifficulty.reel_pull_pause_duration
 
-	print("Fish pulled closer smoothly. Pull pause: ", FishDifficulty.reel_pull_pause_duration)
-
+# Restarts side-to-side swimming after the fish recovers.
 func restart_swimming(bobber_position: Vector3) -> void:
 	setup_for_bite(bobber_position)
 	randomize_swim_direction()
 
+# Calculates the fish's current world position from anchor and offsets.
 func get_fish_world_position(Player: CharacterBody3D) -> Vector3:
 	var right_direction := Player.global_basis.x.normalized()
 	var away_direction := _get_away_direction(Player)
@@ -176,6 +186,7 @@ func get_fish_world_position(Player: CharacterBody3D) -> Vector3:
 
 	return position
 
+# Gets the direction pointing away from the player.
 func _get_away_direction(Player: CharacterBody3D) -> Vector3:
 	var away_direction := fish_anchor_position - Player.global_position
 	away_direction.y = 0.0
@@ -185,8 +196,7 @@ func _get_away_direction(Player: CharacterBody3D) -> Vector3:
 
 	return away_direction.normalized()
 
+# Reverses fish direction after it reaches a side limit.
 func _bounce_fish_direction() -> void:
 	fish_swim_direction *= -1
 	direction_change_timer = 0.0
-
-	print("Fish reached side limit. New direction: ", fish_swim_direction)

@@ -9,7 +9,7 @@ enum BobberState {
 }
 
 signal fish_prox_change(prox_text: String, closest_hotspot: Area3D)
-signal fish_bite_requested(difficulty_text: String, closest_hotspot: Area3D, bite_distance: float)
+signal fish_bite_signal(difficulty_text: String, closest_hotspot: Area3D, bite_distance: float)
 
 @onready var Mark_Line_Start: Marker3D = $"../FishingPole/Mark_LineStart"
 @onready var Mark_Bobber_Home: Marker3D = $"../FishingPole/Mark_Bobber_Home"
@@ -63,7 +63,7 @@ func _physics_process(delta: float) -> void:
 
 		BobberState.in_water:
 			_float_in_water(delta)
-			_update_fish_heat()
+			_update_fish_prox()
 			_process_bite_roll(delta)
 
 		BobberState.on_land:
@@ -72,6 +72,7 @@ func _physics_process(delta: float) -> void:
 		BobberState.hooked:
 			pass
 
+# Reset Bobber to Pole
 func on_pole_ready() -> void:
 	state = BobberState.home_pos
 
@@ -92,6 +93,7 @@ func on_pole_ready() -> void:
 	global_position = Mark_Bobber_Home.global_position
 	global_rotation = Mark_Bobber_Home.global_rotation
 
+# Bobber cast
 func on_cast() -> void:
 	state = BobberState.casting
 
@@ -117,6 +119,7 @@ func on_cast() -> void:
 		+ Vector3.UP * _cast_up_force
 	)
 
+# State change to hooked
 func start_hooked_mode() -> void:
 	state = BobberState.hooked
 
@@ -127,19 +130,19 @@ func start_hooked_mode() -> void:
 	bite_active = true
 	Bobber_Mesh.visible = false
 
-	print("Bobber entered hooked mode.")
-
+# Exit hooked
 func end_hooked_mode() -> void:
 	Bobber_Mesh.visible = true
 	Bobber_Area_Col.hide_fish_ui()
 	on_pole_ready()
 
+# Bobber pos is fish pos
 func set_hooked_position(new_position: Vector3) -> void:
 	if state != BobberState.hooked:
 		return
-
 	global_position = new_position
 
+# Smoothly follows the fishing pole home position.
 func _follow_home_pos(delta: float) -> void:
 	var current_basis := global_basis.orthonormalized()
 	var target_basis := Mark_Bobber_Home.global_basis.orthonormalized()
@@ -157,6 +160,7 @@ func _follow_home_pos(delta: float) -> void:
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
 
+# Simulates bobbing and floating
 func _float_in_water(delta: float) -> void:
 	buoyancy_time += delta
 
@@ -178,6 +182,7 @@ func _float_in_water(delta: float) -> void:
 
 	linear_velocity.y = 0.0
 
+# Bite roll
 func _process_bite_roll(delta: float) -> void:
 	if bite_active:
 		return
@@ -205,6 +210,7 @@ func _process_bite_roll(delta: float) -> void:
 
 	_try_bite(distance, closest_hotspot)
 
+# Detects on cast collision
 func _on_body_entered(body) -> void:
 	if state != BobberState.casting:
 		return
@@ -213,14 +219,15 @@ func _on_body_entered(body) -> void:
 		_land_on_terrain()
 		return
 
+# Detects water entry
 func _on_area_entered(area: Area3D) -> void:
 	if state == BobberState.casting:
 		if _is_on_layer(area, sheets_globals.water_layer):
-			print("Bobber entered water area.")
 			_enter_water()
 			return
 
-func _update_fish_heat() -> void:
+# Updates fish proximity based on nearby hotspots.
+func _update_fish_prox() -> void:
 	if not _is_inside_fishing_zone():
 		Bobber_Area_Col.hide_fish_ui()
 		fish_prox_change.emit("Cold", null)
@@ -250,6 +257,7 @@ func _update_fish_heat() -> void:
 		Bobber_Area_Col.set_proximity_visual("Cold")
 		fish_prox_change.emit("Cold", closest_hotspot)
 
+# Calculates bite chance based on hotspot distance.
 func _try_bite(distance: float, closest_hotspot: Area3D) -> void:
 	var bite_chance := 0.0
 
@@ -263,17 +271,14 @@ func _try_bite(distance: float, closest_hotspot: Area3D) -> void:
 		return
 
 	var bite_roll := randf()
-	print("Bite roll: ", bite_roll, " | needed <= ", bite_chance)
 
 	if bite_roll > bite_chance:
-		print("No bite.")
 		return
 
 	bite_active = true
+	fish_bite_signal.emit("", closest_hotspot, distance)
 
-	print("Fish bite! Distance from hotspot: ", distance)
-	fish_bite_requested.emit("", closest_hotspot, distance)
-
+# Start in water mode
 func _enter_water() -> void:
 	state = BobberState.in_water
 
@@ -285,9 +290,9 @@ func _enter_water() -> void:
 
 	linear_velocity *= _water_drag
 
-	print("Bobber is now in water.")
-	_update_fish_heat()
+	_update_fish_prox()
 
+# Start I hit land
 func _land_on_terrain() -> void:
 	state = BobberState.on_land
 
@@ -298,8 +303,7 @@ func _land_on_terrain() -> void:
 
 	Bobber_Area_Col.hide_fish_ui()
 
-	print("Bobber landed on terrain.")
-
+# Bobber in fish zone check
 func _is_inside_fishing_zone() -> bool:
 	if FishingZone == null:
 		return false
@@ -309,6 +313,7 @@ func _is_inside_fishing_zone() -> bool:
 
 	return FishingZone.is_point_inside_any_zone(global_position)
 
+# Checks if a collision object layer.
 func _is_on_layer(collision_object, layer_number: int) -> bool:
 	if collision_object == null:
 		return false

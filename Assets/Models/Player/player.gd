@@ -24,7 +24,8 @@ enum PlayerState {
 var state: PlayerState = PlayerState.roaming
 var auto_reel := false
 
-func _ready():
+# Connects fishing, pole, bobber, camera, and input signals.
+func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 	on_cast_started.connect(Fishing_Pole.on_cast_started)
@@ -35,16 +36,18 @@ func _ready():
 
 	fish_input_pressed.connect(FishingMechanic.on_player_fish_input)
 
-	Bobber.fish_bite_requested.connect(FishingMechanic.start_fish_bite)
+	Bobber.fish_bite_signal.connect(FishingMechanic.start_fish_bite)
 	FishingMechanic.fish_caught.connect(_on_fish_caught)
 	FishingMechanic.fish_caught_reel.connect(fish_caught_reel)
 
 	Camera_Controller.enter_free_mode()
 
-func _unhandled_input(event: InputEvent):
+# Passes mouse movement into the camera controller.
+func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		Camera_Controller.handle_mouse_motion(event)
 
+# Runs player behavior based on roaming or fishing state.
 func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("debug_close"):
 		get_tree().quit()
@@ -58,6 +61,7 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
+# Handles normal player movement and casting.
 func _roaming_state(delta: float) -> void:
 	_apply_gravity(delta)
 	_handle_jump()
@@ -66,6 +70,7 @@ func _roaming_state(delta: float) -> void:
 	if Input.is_action_just_pressed("int_cast"):
 		_enter_fishing_state()
 
+# Handles fishing camera lock, fish input, and manual reel.
 func _fishing_state(delta: float) -> void:
 	_apply_gravity(delta)
 
@@ -81,6 +86,7 @@ func _fishing_state(delta: float) -> void:
 	if Input.is_action_just_pressed("int_reel"):
 		_reel()
 
+# Emits fish minigame inputs while fishing.
 func _handle_fish_input() -> void:
 	if Input.is_action_just_pressed("move_leftw"):
 		fish_input_pressed.emit("move_leftw")
@@ -94,12 +100,14 @@ func _handle_fish_input() -> void:
 	if Input.is_action_just_pressed("move_bckw"):
 		fish_input_pressed.emit("move_bckw")
 
+# State to fishing
 func _enter_fishing_state() -> void:
 	state = PlayerState.fishing
 	auto_reel = false
 	Camera_Controller.enter_fishing_mode()
 	_cast()
 
+# State to roaming
 func _exit_fishing_state() -> void:
 	state = PlayerState.roaming
 	auto_reel = false
@@ -108,6 +116,7 @@ func _exit_fishing_state() -> void:
 func _cast() -> void:
 	on_cast_started.emit()
 
+# Manually reels in and exits fishing mode.
 func _reel() -> void:
 	if state != PlayerState.fishing:
 		return
@@ -115,6 +124,7 @@ func _reel() -> void:
 	on_reel_started.emit()
 	_exit_fishing_state()
 
+# Aurot reel when escape/catch-reel event.
 func fish_caught_reel() -> void:
 	if auto_reel:
 		return
@@ -124,11 +134,13 @@ func fish_caught_reel() -> void:
 
 	_reel()
 
+# End fishing on caught.
 func _on_fish_caught() -> void:
 	auto_reel = true
 	Camera_Controller.enter_free_mode()
 	_exit_fishing_state()
 
+# Incase other state such as swimming
 func _apply_gravity(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta

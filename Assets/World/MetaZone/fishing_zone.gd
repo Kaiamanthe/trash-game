@@ -4,6 +4,7 @@ extends Node3D
 @onready var FishingZoneLeft: CollisionShape3D = $FishingZoneLeft
 @onready var FishingZoneRight: CollisionShape3D = $FishingZoneRight
 
+# Returns every fishing zone collision shape.
 func get_zones() -> Array[CollisionShape3D]:
 	return [
 		FishingZoneMain,
@@ -11,12 +12,15 @@ func get_zones() -> Array[CollisionShape3D]:
 		FishingZoneRight
 	]
 
+# Checks whether a point is inside any fishing zone.
 func is_point_inside_any_zone(point: Vector3) -> bool:
 	for zone in get_zones():
 		if is_point_inside_zone(point, zone):
 			return true
+
 	return false
 
+# Checks whether a point is inside one box-shaped fishing zone.
 func is_point_inside_zone(point: Vector3, zone: CollisionShape3D) -> bool:
 	if zone == null:
 		return false
@@ -34,6 +38,7 @@ func is_point_inside_zone(point: Vector3, zone: CollisionShape3D) -> bool:
 		and abs(local_point.z) <= half_size.z
 	)
 
+# Clamps a point into the nearest valid fishing zone.
 func clamp_point_inside_any_zone(point: Vector3) -> Vector3:
 	var best_point := point
 	var best_distance := INF
@@ -49,6 +54,7 @@ func clamp_point_inside_any_zone(point: Vector3) -> Vector3:
 	best_point.y = sheets_globals.water_level
 	return best_point
 
+# Clamps a point into one box-shaped fishing zone.
 func clamp_point_inside_zone(point: Vector3, zone: CollisionShape3D) -> Vector3:
 	if zone == null:
 		return point
@@ -69,6 +75,7 @@ func clamp_point_inside_zone(point: Vector3, zone: CollisionShape3D) -> Vector3:
 
 	return world_point
 
+# Returns the average center point of all fishing zones.
 func get_combined_zone_center() -> Vector3:
 	var center := Vector3.ZERO
 	var count := 0
@@ -85,4 +92,5 @@ func get_combined_zone_center() -> Vector3:
 
 	center /= float(count)
 	center.y = sheets_globals.water_level
+
 	return center

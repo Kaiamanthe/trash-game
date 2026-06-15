@@ -27,6 +27,7 @@ var reel_pull_smooth_speed := 3.0
 
 var direction_change_interval := 2.0
 
+# Chooses fish difficulty based on bite distance and player distance.
 func apply_from_distance(bite_distance: float, player_distance: float) -> void:
 	var easy_chance := 0.65
 	var medium_chance := 0.30
@@ -67,8 +68,7 @@ func apply_from_distance(bite_distance: float, player_distance: float) -> void:
 	else:
 		set_hard_fish()
 
-	print("Difficulty roll: ", difficulty_roll, " | Player distance: ", player_distance)
-
+# Applies easy fish movement and reel values.
 func set_easy_fish() -> void:
 	difficulty = FishDifficultyLevel.easy
 	difficulty_name = "easy"
@@ -91,6 +91,7 @@ func set_easy_fish() -> void:
 
 	direction_change_interval = 2.8
 
+# Applies medium fish movement and reel values.
 func set_medium_fish() -> void:
 	difficulty = FishDifficultyLevel.medium
 	difficulty_name = "medium"
@@ -113,6 +114,7 @@ func set_medium_fish() -> void:
 
 	direction_change_interval = 2.2
 
+# Applies hard fish movement and reel values.
 func set_hard_fish() -> void:
 	difficulty = FishDifficultyLevel.hard
 	difficulty_name = "hard"

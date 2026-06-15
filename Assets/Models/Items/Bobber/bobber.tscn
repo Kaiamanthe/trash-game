@@ -42,3 +42,29 @@ collision_mask = 3
 [node name="Bobber_Area_Col" type="CollisionShape3D" parent="Bobber_Area" unique_id=568323010]
 shape = SubResource("CylinderShape3D_55obq")
 script = ExtResource("2_vqysb")
+
+[node name="BobberFishUI" type="Node3D" parent="Bobber_Area/Bobber_Area_Col" unique_id=102548478]
+
+[node name="ProximityGuide" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=1007278978]
+
+[node name="DirectionGuide" type="Node3D" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=692520206]
+
+[node name="Key_A" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/DirectionGuide" unique_id=1226528349]
+
+[node name="Key_D" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/DirectionGuide" unique_id=1800061691]
+
+[node name="ReelGuide" type="Node3D" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=1802258946]
+
+[node name="Key_W" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/ReelGuide" unique_id=42029332]
+
+[node name="Key_D" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/ReelGuide" unique_id=970363266]
+
+[node name="Key_S" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/ReelGuide" unique_id=912181457]
+
+[node name="Key_A" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/ReelGuide" unique_id=635717079]
+
+[node name="AnimationTree" type="AnimationPlayer" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=785568369]
+
+[node name="ShakeTimer" type="Timer" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=1093227785]
+
+[node name="BlinkTimer" type="Timer" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=596665271]

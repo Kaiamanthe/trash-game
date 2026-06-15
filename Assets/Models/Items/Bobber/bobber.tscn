@@ -2,6 +2,12 @@
 
 [ext_resource type="Script" uid="uid://l34y8nid25vo" path="res://Assets/Models/Items/Bobber/bobber.gd" id="1_j30dm"]
 [ext_resource type="Script" uid="uid://u0q2fhq0r152" path="res://Assets/Models/Items/Bobber/bobber_area_col.gd" id="2_vqysb"]
+[ext_resource type="Script" uid="uid://fcdceehu7ng2" path="res://Assets/Models/Items/Bobber/bobber_fish_ui.gd" id="3_yeemg"]
+[ext_resource type="Texture2D" uid="uid://cwyumx1xf5yrq" path="res://Assets/World/FishingMechanic/Sprites/Fish_Icon.png" id="4_1o0yc"]
+[ext_resource type="Texture2D" uid="uid://nwwdvbrht1u8" path="res://Assets/World/FishingMechanic/Sprites/Key_A.png" id="4_ugo61"]
+[ext_resource type="Texture2D" uid="uid://dund0fnrfvhyj" path="res://Assets/World/FishingMechanic/Sprites/Key_D.png" id="5_1o0yc"]
+[ext_resource type="Texture2D" uid="uid://r4qkvinhaw8t" path="res://Assets/World/FishingMechanic/Sprites/Key_W.png" id="6_ibqgf"]
+[ext_resource type="Texture2D" uid="uid://qkfqvq72ky0m" path="res://Assets/World/FishingMechanic/Sprites/Key_S.png" id="7_hlc1m"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4uqrg"]
 
@@ -44,26 +50,34 @@ shape = SubResource("CylinderShape3D_55obq")
 script = ExtResource("2_vqysb")
 
 [node name="BobberFishUI" type="Node3D" parent="Bobber_Area/Bobber_Area_Col" unique_id=102548478]
+script = ExtResource("3_yeemg")
 
-[node name="ProximityGuide" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=1007278978]
+[node name="ProximityGuide" type="Sprite3D" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=799969467]
+texture = ExtResource("4_1o0yc")
 
 [node name="DirectionGuide" type="Node3D" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=692520206]
 
-[node name="Key_A" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/DirectionGuide" unique_id=1226528349]
+[node name="Key_A" type="Sprite3D" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/DirectionGuide" unique_id=1658224904]
+texture = ExtResource("4_ugo61")
 
-[node name="Key_D" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/DirectionGuide" unique_id=1800061691]
+[node name="Key_D" type="Sprite3D" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/DirectionGuide" unique_id=2028684578]
+texture = ExtResource("5_1o0yc")
 
 [node name="ReelGuide" type="Node3D" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=1802258946]
 
-[node name="Key_W" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/ReelGuide" unique_id=42029332]
+[node name="Key_W" type="Sprite3D" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/ReelGuide" unique_id=641053752]
+texture = ExtResource("6_ibqgf")
 
-[node name="Key_D" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/ReelGuide" unique_id=970363266]
+[node name="Key_D" type="Sprite3D" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/ReelGuide" unique_id=1760182112]
+texture = ExtResource("5_1o0yc")
 
-[node name="Key_S" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/ReelGuide" unique_id=912181457]
+[node name="Key_S" type="Sprite3D" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/ReelGuide" unique_id=419107414]
+texture = ExtResource("7_hlc1m")
 
-[node name="Key_A" type="SubViewport" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/ReelGuide" unique_id=635717079]
+[node name="Key_A" type="Sprite3D" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI/ReelGuide" unique_id=651285356]
+texture = ExtResource("4_ugo61")
 
-[node name="AnimationTree" type="AnimationPlayer" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=785568369]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=605549404]
 
 [node name="ShakeTimer" type="Timer" parent="Bobber_Area/Bobber_Area_Col/BobberFishUI" unique_id=1093227785]
 

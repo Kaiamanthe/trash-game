@@ -28,6 +28,9 @@ func reset_for_swimming_restart() -> void:
 	reel_progress = 0.0
 	reel_pattern_index = 0
 
+func get_expected_reel_action() -> String:
+	return reel_pattern[reel_pattern_index]
+
 func handle_swimming_input(action_name: String, fish_swim_direction: int, FishDifficulty) -> String:
 	var correct_action := ""
 
@@ -42,6 +45,7 @@ func handle_swimming_input(action_name: String, fish_swim_direction: int, FishDi
 	else:
 		fish_tired_meter = max(fish_tired_meter - 1.0, 0.0)
 		print("Wrong direction. Tired meter: ", fish_tired_meter)
+		return "wrong"
 
 	if fish_tired_meter >= FishDifficulty.fish_tired_needed:
 		return "tired"
@@ -68,9 +72,12 @@ func handle_reel_input(action_name: String, FishDifficulty) -> String:
 				return "restart"
 
 			return "pull"
-	else:
-		if action_name in reel_pattern:
-			reel_pattern_index = 0
-			print("Wrong reel input. Pattern reset.")
+
+		return "next"
+
+	if action_name in reel_pattern:
+		reel_pattern_index = 0
+		print("Wrong reel input. Pattern reset.")
+		return "wrong"
 
 	return ""

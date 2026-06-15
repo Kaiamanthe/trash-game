@@ -15,7 +15,8 @@ signal fish_bite_requested(difficulty_text: String, closest_hotspot: Area3D, bit
 @onready var Mark_Bobber_Home: Marker3D = $"../FishingPole/Mark_Bobber_Home"
 @onready var Bobber_Area: Area3D = $Bobber_Area
 @onready var Bobber_Mesh: Node3D = $Bobber_Mesh
-@onready var Bobber_Area_Col: CollisionShape3D = $Bobber_Area/Bobber_Area_Col
+@onready var Bobber_Area_Col = $Bobber_Area/Bobber_Area_Col
+@onready var FishingZone: Node3D = $"../FishingZone"
 
 var state: BobberState = BobberState.home_pos
 
@@ -84,6 +85,7 @@ func on_pole_ready() -> void:
 	bite_active = false
 
 	Bobber_Area_Col.reset_hotspots()
+	Bobber_Area_Col.hide_fish_ui()
 
 	Bobber_Mesh.visible = true
 
@@ -102,6 +104,7 @@ func on_cast() -> void:
 	bite_active = false
 
 	Bobber_Area_Col.reset_hotspots()
+	Bobber_Area_Col.hide_fish_ui()
 
 	Bobber_Mesh.visible = true
 
@@ -128,6 +131,7 @@ func start_hooked_mode() -> void:
 
 func end_hooked_mode() -> void:
 	Bobber_Mesh.visible = true
+	Bobber_Area_Col.hide_fish_ui()
 	on_pole_ready()
 
 func set_hooked_position(new_position: Vector3) -> void:
@@ -178,6 +182,10 @@ func _process_bite_roll(delta: float) -> void:
 	if bite_active:
 		return
 
+	if not _is_inside_fishing_zone():
+		bite_roll_timer = 0.0
+		return
+
 	var closest_hotspot: Area3D = Bobber_Area_Col.get_closest_hotspot()
 
 	if closest_hotspot == null:
@@ -192,6 +200,9 @@ func _process_bite_roll(delta: float) -> void:
 	bite_roll_timer = 0.0
 
 	var distance: float = Bobber_Area_Col.get_distance_to_closest_hotspot()
+
+	Bobber_Area_Col.play_bite_check_visual()
+
 	_try_bite(distance, closest_hotspot)
 
 func _on_body_entered(body) -> void:
@@ -210,26 +221,33 @@ func _on_area_entered(area: Area3D) -> void:
 			return
 
 func _update_fish_heat() -> void:
+	if not _is_inside_fishing_zone():
+		Bobber_Area_Col.hide_fish_ui()
+		fish_prox_change.emit("Cold", null)
+		return
+
 	Bobber_Area_Col.refresh_nearby_hotspots()
 
 	var closest_hotspot: Area3D = Bobber_Area_Col.get_closest_hotspot()
 
 	if closest_hotspot == null:
+		Bobber_Area_Col.set_proximity_visual("Cold")
 		fish_prox_change.emit("Cold", null)
 		return
 
 	var distance: float = Bobber_Area_Col.get_distance_to_closest_hotspot()
 
 	if distance <= _closest_dis:
+		Bobber_Area_Col.set_proximity_visual("Closest")
 		fish_prox_change.emit("Closest", closest_hotspot)
-		print("Fish indicator: Closest | closest: ", closest_hotspot.name, " | distance: ", distance)
 	elif distance <= _closer_dis:
+		Bobber_Area_Col.set_proximity_visual("Closer")
 		fish_prox_change.emit("Closer", closest_hotspot)
-		print("Fish indicator: Closer | closest: ", closest_hotspot.name, " | distance: ", distance)
 	elif distance <= _close_dis:
+		Bobber_Area_Col.set_proximity_visual("Close")
 		fish_prox_change.emit("Close", closest_hotspot)
-		print("Fish indicator: Close | closest: ", closest_hotspot.name, " | distance: ", distance)
 	else:
+		Bobber_Area_Col.set_proximity_visual("Cold")
 		fish_prox_change.emit("Cold", closest_hotspot)
 
 func _try_bite(distance: float, closest_hotspot: Area3D) -> void:
@@ -278,7 +296,18 @@ func _land_on_terrain() -> void:
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
 
+	Bobber_Area_Col.hide_fish_ui()
+
 	print("Bobber landed on terrain.")
+
+func _is_inside_fishing_zone() -> bool:
+	if FishingZone == null:
+		return false
+
+	if not FishingZone.has_method("is_point_inside_any_zone"):
+		return false
+
+	return FishingZone.is_point_inside_any_zone(global_position)
 
 func _is_on_layer(collision_object, layer_number: int) -> bool:
 	if collision_object == null:

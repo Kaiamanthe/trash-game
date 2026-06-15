@@ -23,6 +23,7 @@ enum FishHookedState {
 @onready var FishDifficulty = $"../FishDifficulty"
 @onready var FishMovement = $"../FishMovement"
 @onready var FishReelInput = $"../FishReelInput"
+@onready var Bobber_Area_Col = $"../../Bobber/Bobber_Area/Bobber_Area_Col"
 
 var state: FishHookedState = FishHookedState.inactive
 
@@ -76,6 +77,7 @@ func release_fish() -> void:
 
 	FishMovement.reset_all()
 	FishReelInput.reset_all()
+	Bobber_Area_Col.hide_fish_ui()
 
 	print("Fish released / fishing reset.")
 	fish_released.emit()
@@ -89,6 +91,9 @@ func on_player_fish_input(action_name: String) -> void:
 				FishDifficulty
 			)
 
+			if swim_result == "wrong":
+				Bobber_Area_Col.show_wrong_direction()
+
 			if swim_result == "tired":
 				_start_fish_tired()
 
@@ -99,8 +104,15 @@ func on_player_fish_input(action_name: String) -> void:
 			)
 
 			match reel_result:
+				"wrong":
+					Bobber_Area_Col.show_wrong_reel(FishReelInput.get_expected_reel_action())
+
+				"next":
+					Bobber_Area_Col.show_reel_expected(FishReelInput.get_expected_reel_action())
+
 				"pull":
 					FishMovement.pull_fish_closer(FishDifficulty)
+					Bobber_Area_Col.show_reel_expected(FishReelInput.get_expected_reel_action())
 
 				"catch":
 					FishMovement.pull_fish_closer(FishDifficulty)
@@ -113,6 +125,8 @@ func on_player_fish_input(action_name: String) -> void:
 func _begin_side_to_side() -> void:
 	state = FishHookedState.fish_swimming
 	FishMovement.begin_side_to_side()
+
+	Bobber_Area_Col.show_direction_guide(FishMovement.get_swim_direction())
 
 	print("Fish begins parallel side-to-side movement.")
 	fish_swim_started.emit(FishMovement.get_swim_direction())
@@ -142,9 +156,11 @@ func _process_fish_swimming(delta: float) -> void:
 		"escaped":
 			state = FishHookedState.inactive
 			set_process(false)
+			Bobber_Area_Col.hide_fish_ui()
 			fish_caught_reel.emit()
 
 		"direction_changed":
+			Bobber_Area_Col.show_direction_guide(FishMovement.get_swim_direction())
 			fish_swim_started.emit(FishMovement.get_swim_direction())
 
 func _process_fish_tired(delta: float) -> void:
@@ -159,6 +175,7 @@ func _process_fish_tired(delta: float) -> void:
 	if result == "escaped":
 		state = FishHookedState.inactive
 		set_process(false)
+		Bobber_Area_Col.hide_fish_ui()
 		fish_caught_reel.emit()
 
 func _process_fish_reeling_in(delta: float) -> void:
@@ -177,6 +194,8 @@ func _start_fish_tired() -> void:
 	FishReelInput.reset_reel_phase()
 	FishMovement.start_tired_phase()
 
+	Bobber_Area_Col.show_reel_guide(FishReelInput.get_expected_reel_action())
+
 	print("Fish is tired. Spin WASD in a circle.")
 	fish_tired_started.emit()
 
@@ -185,6 +204,8 @@ func _restart_fish_swimming() -> void:
 
 	FishMovement.restart_swimming(Bobber.global_position)
 	FishReelInput.reset_for_swimming_restart()
+
+	Bobber_Area_Col.show_direction_guide(FishMovement.get_swim_direction())
 
 	print("Fish recovered. Back to parallel side-to-side movement.")
 	fish_swim_started.emit(FishMovement.get_swim_direction())
@@ -197,6 +218,7 @@ func _catch_fish() -> void:
 		return
 
 	state = FishHookedState.fish_reeling_in
+	Bobber_Area_Col.hide_fish_ui()
 
 	print("Fish hooked successfully. Reeling in.")
 
@@ -208,6 +230,7 @@ func _finish_fish_catch() -> void:
 	set_process(false)
 
 	Bobber.end_hooked_mode()
+	Bobber_Area_Col.hide_fish_ui()
 
 	print("Fish caught.")
 	fish_caught.emit()

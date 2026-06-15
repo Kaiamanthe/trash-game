@@ -35,7 +35,6 @@ func _mix_hotspot() -> void:
 	for hotspot in hotspots:
 		var zone: CollisionShape3D = zones.pick_random()
 		hotspot.global_position = _get_random_point_in_zone(zone)
-	#print("Hotspots moved.")
 
 func _get_random_point_in_zone(zone: CollisionShape3D) -> Vector3:
 	var shape := zone.shape as BoxShape3D

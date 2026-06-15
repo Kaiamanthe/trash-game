@@ -25,6 +25,7 @@ var state: PlayerState = PlayerState.roaming
 
 var mouse_sensitivity := 0.002
 var free_cam := true
+var force_reeling := false
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -39,6 +40,7 @@ func _ready():
 
 	Bobber.fish_bite_requested.connect(FishHooked.start_fish_bite)
 	FishHooked.fish_caught.connect(_on_fish_caught)
+	FishHooked.fish_caught_reel.connect(fish_caught_reel)
 
 func _unhandled_input(event: InputEvent):
 	if event is InputEventMouseMotion and free_cam:
@@ -74,12 +76,15 @@ func _roaming_state(delta: float) -> void:
 
 func _fishing_state(delta: float) -> void:
 	_apply_gravity(delta)
-	_free_cam_off()
+
+	if not force_reeling:
+		_free_cam_off()
 
 	velocity.x = move_toward(velocity.x, 0, SPEED)
 	velocity.z = move_toward(velocity.z, 0, SPEED)
 
-	_handle_fish_input()
+	if not force_reeling:
+		_handle_fish_input()
 
 	if Input.is_action_just_pressed("int_reel"):
 		_reel()
@@ -100,11 +105,13 @@ func _handle_fish_input() -> void:
 func _enter_fishing_state() -> void:
 	state = PlayerState.fishing
 	free_cam = false
+	force_reeling = false
 	_cast()
 
 func _exit_fishing_state() -> void:
 	state = PlayerState.roaming
 	free_cam = true
+	force_reeling = false
 
 	Camera_Pivot.rotation.x = 0.0
 
@@ -112,11 +119,31 @@ func _cast() -> void:
 	on_cast_started.emit()
 
 func _reel() -> void:
+	if state != PlayerState.fishing:
+		return
+
 	on_reel_started.emit()
 	_exit_fishing_state()
 
+func fish_caught_reel() -> void:
+	if force_reeling:
+		return
+
+	print("Fish left zone / touched terrain. Force reeling.")
+
+	force_reeling = true
+	free_cam = true
+	Camera_Pivot.rotation.x = 0.0
+
+	_reel()
+
 func _on_fish_caught() -> void:
 	print("Player received fish caught. Returning to roaming.")
+
+	force_reeling = true
+	free_cam = true
+	Camera_Pivot.rotation.x = 0.0
+
 	_exit_fishing_state()
 
 func _apply_gravity(delta: float) -> void:
@@ -139,6 +166,12 @@ func _handle_movement() -> void:
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 
 func _free_cam_off() -> void:
+	if state != PlayerState.fishing:
+		return
+
+	if force_reeling:
+		return
+
 	free_cam = false
 
 	var look_target := Mark_Line_End.global_position

@@ -4,13 +4,13 @@
 [ext_resource type="Script" uid="uid://b5b801bs7tgl3" path="res://Assets/World/MetaZone/fishing_zone.gd" id="1_ruefi"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_5wujk"]
-size = Vector3(80, 5, 15)
+size = Vector3(80, 5, 25)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ruefi"]
-size = Vector3(40, 5, 15)
+size = Vector3(45, 5, 20)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_vyht1"]
-size = Vector3(40, 5, 15)
+size = Vector3(50, 5, 20)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5wujk"]
 
@@ -22,11 +22,11 @@ transform = Transform3D(-0.76435894, 0, 0.64479095, 0, 1, 0, -0.64479095, 0, -0.
 shape = SubResource("BoxShape3D_5wujk")
 
 [node name="FishingZoneLeft" type="CollisionShape3D" parent="." unique_id=798172247]
-transform = Transform3D(-0.65547925, 0, -0.7552131, 0, 1, 0, 0.7552131, 0, -0.65547925, 44.579556, 0, 21.205503)
+transform = Transform3D(-0.64583087, 0, -0.7634804, 0, 1, 0, 0.7634804, 0, -0.64583087, 44.68108, 0, 24.533245)
 shape = SubResource("BoxShape3D_ruefi")
 
 [node name="FishingZoneRight" type="CollisionShape3D" parent="." unique_id=447620993]
-transform = Transform3D(-0.63968056, 0, -0.76864094, 0, 1, 0, 0.76864094, 0, -0.63968056, -28.356148, 0, -40.138065)
+transform = Transform3D(-0.63968056, 0, -0.76864094, 0, 1, 0, 0.76864094, 0, -0.63968056, -30.324152, 0, -41.775883)
 shape = SubResource("BoxShape3D_vyht1")
 
 [node name="HotSpotManager" type="Node3D" parent="." unique_id=1948560980]

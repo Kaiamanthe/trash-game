@@ -4,12 +4,16 @@ signal fish_bite_started
 signal fish_swim_started(direction: int)
 signal fish_tired_started
 signal fish_caught
+signal fish_caught_reel
 signal fish_released
+
 
 enum FishHookedState {
 	inactive,
+	fish_pulling_away,
 	fish_swimming,
 	fish_tired,
+	fish_reeling_in,
 	fish_caught
 }
 
@@ -36,6 +40,9 @@ var fish_swim_speed := 1.0
 var fish_pull_speed := 1.5
 var fish_swim_range := 5.0
 
+var fish_start_min_distance := 7.0
+var fish_start_pull_away_speed := 2.5
+
 var fish_tired_meter := 0.0
 var fish_tired_needed := 5.0
 
@@ -50,6 +57,9 @@ var reel_pull_amount := 1.25
 var reel_pull_pause_timer := 0.0
 var reel_pull_pause_duration := 1.0
 var reel_pull_smooth_speed := 3.0
+
+var reel_in_speed := 10.0
+var catch_distance := 1.5
 
 var direction_change_timer := 0.0
 var direction_change_interval := 2.0
@@ -68,11 +78,17 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	match state:
+		FishHookedState.fish_pulling_away:
+			_process_fish_pulling_away(delta)
+
 		FishHookedState.fish_swimming:
 			_process_fish_swimming(delta)
 
 		FishHookedState.fish_tired:
 			_process_fish_tired(delta)
+
+		FishHookedState.fish_reeling_in:
+			_process_fish_reeling_in(delta)
 
 func start_fish_bite(difficulty_text: String, closest_hotspot: Area3D = null, bite_distance: float = 999.0) -> void:
 	if state != FishHookedState.inactive:
@@ -80,13 +96,12 @@ func start_fish_bite(difficulty_text: String, closest_hotspot: Area3D = null, bi
 
 	_apply_difficulty_from_distance(bite_distance)
 
-	state = FishHookedState.fish_swimming
 	set_process(true)
-
 	Bobber.start_hooked_mode()
 
 	fish_anchor_position = Bobber.global_position
 	fish_anchor_position.y = sheets_globals.water_level
+
 	fish_side_offset = 0.0
 	fish_away_offset = 0.0
 	fish_away_target_offset = 0.0
@@ -103,11 +118,18 @@ func start_fish_bite(difficulty_text: String, closest_hotspot: Area3D = null, bi
 	else:
 		fish_swim_direction = -1
 
+	var player_distance := Player.global_position.distance_to(Bobber.global_position)
+
+	if player_distance < fish_start_min_distance:
+		state = FishHookedState.fish_pulling_away
+		print("FishHooked started close to player. Pulling away first.")
+	else:
+		_begin_side_to_side()
+
 	print("FishHooked started. Bite distance: ", bite_distance, " | Difficulty: ", FishDifficulty.keys()[difficulty])
 	print("Fish swimming direction: ", fish_swim_direction)
 
 	fish_bite_started.emit()
-	fish_swim_started.emit(fish_swim_direction)
 
 func release_fish() -> void:
 	state = FishHookedState.inactive
@@ -136,6 +158,47 @@ func on_player_fish_input(action_name: String) -> void:
 
 		FishHookedState.fish_tired:
 			_handle_reel_input(action_name)
+
+func _begin_side_to_side() -> void:
+	state = FishHookedState.fish_swimming
+	direction_change_timer = 0.0
+
+	print("Fish begins parallel side-to-side movement.")
+	fish_swim_started.emit(fish_swim_direction)
+
+func _process_fish_pulling_away(delta: float) -> void:
+	var current_position := _get_fish_world_position()
+	var current_distance := Player.global_position.distance_to(current_position)
+
+	if current_distance >= fish_start_min_distance:
+		fish_anchor_position = Bobber.global_position
+		fish_anchor_position.y = sheets_globals.water_level
+		fish_side_offset = 0.0
+		fish_away_offset = 0.0
+		fish_away_target_offset = 0.0
+		_begin_side_to_side()
+		return
+
+	fish_away_target_offset += fish_start_pull_away_speed * delta
+
+	fish_away_offset = lerp(
+		fish_away_offset,
+		fish_away_target_offset,
+		delta * reel_pull_smooth_speed
+	)
+
+	var new_position := _get_fish_world_position()
+
+	if not FishingZone.is_point_inside_any_zone(new_position):
+		fish_anchor_position = Bobber.global_position
+		fish_anchor_position.y = sheets_globals.water_level
+		fish_side_offset = 0.0
+		fish_away_offset = 0.0
+		fish_away_target_offset = 0.0
+		_begin_side_to_side()
+		return
+
+	Bobber.set_hooked_position(new_position)
 
 func _apply_difficulty_from_distance(bite_distance: float) -> void:
 	var player_distance := Player.global_position.distance_to(Bobber.global_position)
@@ -187,14 +250,17 @@ func _set_easy_fish() -> void:
 	fish_pull_speed = 1.5
 	fish_swim_range = 8.0
 
+	fish_start_min_distance = 7.0
+	fish_start_pull_away_speed = 2.0
+
 	fish_tired_needed = 4.0
 	reel_progress_needed = 4.0
 	total_reel_needed = 12.0
 
-	fish_tired_pull_speed = 0.25
+	fish_tired_pull_speed = 0.8
 	reel_pull_amount = 1.5
 	reel_pull_pause_duration = 1.2
-	reel_pull_smooth_speed = 2.5
+	reel_pull_smooth_speed = 3.0
 
 	direction_change_interval = 2.8
 
@@ -204,14 +270,17 @@ func _set_medium_fish() -> void:
 	fish_pull_speed = 1.7
 	fish_swim_range = 10.0
 
+	fish_start_min_distance = 8.0
+	fish_start_pull_away_speed = 2.5
+
 	fish_tired_needed = 6.0
 	reel_progress_needed = 6.0
 	total_reel_needed = 18.0
 
-	fish_tired_pull_speed = 0.4
+	fish_tired_pull_speed = 1.0
 	reel_pull_amount = 1.25
 	reel_pull_pause_duration = 0.85
-	reel_pull_smooth_speed = 3.0
+	reel_pull_smooth_speed = 3.5
 
 	direction_change_interval = 2.2
 
@@ -221,14 +290,17 @@ func _set_hard_fish() -> void:
 	fish_pull_speed = 1.9
 	fish_swim_range = 12.0
 
+	fish_start_min_distance = 9.0
+	fish_start_pull_away_speed = 3.0
+
 	fish_tired_needed = 8.0
 	reel_progress_needed = 8.0
 	total_reel_needed = 26.0
 
-	fish_tired_pull_speed = 0.6
+	fish_tired_pull_speed = 1.2
 	reel_pull_amount = 1.0
 	reel_pull_pause_duration = 0.5
-	reel_pull_smooth_speed = 3.5
+	reel_pull_smooth_speed = 4.0
 
 	direction_change_interval = 1.7
 
@@ -255,7 +327,9 @@ func _process_fish_swimming(delta: float) -> void:
 	var new_position := _get_fish_world_position()
 
 	if not FishingZone.is_point_inside_any_zone(new_position):
-		_catch_fish()
+		state = FishHookedState.inactive
+		set_process(false)
+		fish_caught_reel.emit()
 		return
 
 	Bobber.set_hooked_position(new_position)
@@ -275,10 +349,37 @@ func _process_fish_tired(delta: float) -> void:
 	var new_position := _get_fish_world_position()
 
 	if not FishingZone.is_point_inside_any_zone(new_position):
-		_catch_fish()
+		state = FishHookedState.inactive
+		set_process(false)
+		fish_caught_reel.emit()
 		return
 
 	Bobber.set_hooked_position(new_position)
+
+func _process_fish_reeling_in(delta: float) -> void:
+	var target_position := Player.global_position
+	target_position.y = 15.0
+
+	var current_position := Bobber.global_position
+	current_position.y = 15.0
+
+	var new_position := current_position.move_toward(
+		target_position,
+		reel_in_speed * delta
+	)
+
+	new_position.y = 15.0
+
+	Bobber.set_hooked_position(new_position)
+
+	var flat_new_position := new_position
+	var flat_target_position := target_position
+
+	flat_new_position.y = 0.0
+	flat_target_position.y = 0.0
+
+	if flat_new_position.distance_to(flat_target_position) <= catch_distance:
+		_finish_fish_catch()
 
 func _handle_swimming_input(action_name: String) -> void:
 	var correct_action := ""
@@ -372,6 +473,17 @@ func _bounce_fish_direction() -> void:
 	fish_swim_started.emit(fish_swim_direction)
 
 func _catch_fish() -> void:
+	if state == FishHookedState.fish_caught:
+		return
+
+	if state == FishHookedState.fish_reeling_in:
+		return
+
+	state = FishHookedState.fish_reeling_in
+
+	print("Fish hooked successfully. Reeling in.")
+
+func _finish_fish_catch() -> void:
 	if state == FishHookedState.fish_caught:
 		return
 

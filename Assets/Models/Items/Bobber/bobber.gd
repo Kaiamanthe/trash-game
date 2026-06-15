@@ -9,7 +9,7 @@ enum BobberState {
 }
 
 signal fish_prox_change(prox_text: String, closest_hotspot: Area3D)
-signal fish_bite_requested(difficulty_text: String, closest_hotspot: Area3D)
+signal fish_bite_requested(difficulty_text: String, closest_hotspot: Area3D, bite_distance: float)
 
 @onready var Mark_Line_Start: Marker3D = $"../FishingPole/Mark_LineStart"
 @onready var Mark_Bobber_Home: Marker3D = $"../FishingPole/Mark_Bobber_Home"
@@ -254,21 +254,13 @@ func _update_fish_heat() -> void:
 
 func _try_bite(distance: float) -> void:
 	var bite_chance := 0.0
-	var easy_chance := 0.0
-	var medium_chance := 0.0
 
 	if distance <= _closest_dis:
 		bite_chance = 0.80
-		easy_chance = 0.35
-		medium_chance = 0.40
 	elif distance <= _closer_dis:
 		bite_chance = 0.50
-		easy_chance = 0.50
-		medium_chance = 0.40
 	elif distance <= _close_dis:
 		bite_chance = 0.25
-		easy_chance = 0.65
-		medium_chance = 0.30
 	else:
 		return
 
@@ -279,20 +271,10 @@ func _try_bite(distance: float) -> void:
 		print("No bite.")
 		return
 
-	var difficulty_roll := randf()
-	var difficulty_text := "easy"
-
-	if difficulty_roll < easy_chance:
-		difficulty_text = "easy"
-	elif difficulty_roll < easy_chance + medium_chance:
-		difficulty_text = "medium"
-	else:
-		difficulty_text = "hard"
-
 	bite_active = true
 
-	print("Fish bite! Difficulty: ", difficulty_text)
-	fish_bite_requested.emit(difficulty_text, closest_hotspot)
+	print("Fish bite! Distance from hotspot: ", distance)
+	fish_bite_requested.emit("", closest_hotspot, distance)
 
 func _refresh_nearby_hotspots() -> void:
 	nearby_hotspots.clear()

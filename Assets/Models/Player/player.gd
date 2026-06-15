@@ -38,6 +38,7 @@ func _ready():
 	fish_input_pressed.connect(FishHooked.on_player_fish_input)
 
 	Bobber.fish_bite_requested.connect(FishHooked.start_fish_bite)
+	FishHooked.fish_caught.connect(_on_fish_caught)
 
 func _unhandled_input(event: InputEvent):
 	if event is InputEventMouseMotion and free_cam:
@@ -98,17 +99,24 @@ func _handle_fish_input() -> void:
 
 func _enter_fishing_state() -> void:
 	state = PlayerState.fishing
+	free_cam = false
 	_cast()
 
 func _exit_fishing_state() -> void:
 	state = PlayerState.roaming
 	free_cam = true
 
+	Camera_Pivot.rotation.x = 0.0
+
 func _cast() -> void:
 	on_cast_started.emit()
 
 func _reel() -> void:
 	on_reel_started.emit()
+	_exit_fishing_state()
+
+func _on_fish_caught() -> void:
+	print("Player received fish caught. Returning to roaming.")
 	_exit_fishing_state()
 
 func _apply_gravity(delta: float) -> void:

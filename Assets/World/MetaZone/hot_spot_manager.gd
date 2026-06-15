@@ -28,16 +28,12 @@ func _ready() -> void:
 	_mix_hotspot()
 	Hotspot_Timer.start()
 
-func _process(_delta: float) -> void:
-	pass
-
 func _on_hotspot_timer_timeout() -> void:
 	_mix_hotspot()
 
 func _mix_hotspot() -> void:
 	for hotspot in hotspots:
 		var zone: CollisionShape3D = zones.pick_random()
-
 		hotspot.global_position = _get_random_point_in_zone(zone)
 
 	print("Hotspots moved.")

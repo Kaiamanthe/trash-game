@@ -15,14 +15,12 @@ signal fish_bite_requested(difficulty_text: String, closest_hotspot: Area3D, bit
 @onready var Mark_Bobber_Home: Marker3D = $"../FishingPole/Mark_Bobber_Home"
 @onready var Bobber_Area: Area3D = $Bobber_Area
 @onready var Bobber_Mesh: Node3D = $Bobber_Mesh
+@onready var Bobber_Area_Col: CollisionShape3D = $Bobber_Area/Bobber_Area_Col
 
 var state: BobberState = BobberState.home_pos
 
 var buoyancy_time := 0.0
 var water_anchor_position := Vector3.ZERO
-
-var nearby_hotspots: Array[Area3D] = []
-var closest_hotspot: Area3D = null
 
 var bite_roll_timer := 0.0
 var bite_roll_interval := 3.0
@@ -51,7 +49,6 @@ func _ready() -> void:
 	Bobber_Area.monitoring = true
 	Bobber_Area.monitorable = true
 	Bobber_Area.area_entered.connect(_on_area_entered)
-	Bobber_Area.area_exited.connect(_on_bobber_area_exited)
 
 	on_pole_ready()
 
@@ -83,11 +80,10 @@ func on_pole_ready() -> void:
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
 
-	nearby_hotspots.clear()
-	closest_hotspot = null
-
 	bite_roll_timer = 0.0
 	bite_active = false
+
+	Bobber_Area_Col.reset_hotspots()
 
 	Bobber_Mesh.visible = true
 
@@ -102,11 +98,10 @@ func on_cast() -> void:
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
 
-	nearby_hotspots.clear()
-	closest_hotspot = null
-
 	bite_roll_timer = 0.0
 	bite_active = false
+
+	Bobber_Area_Col.reset_hotspots()
 
 	Bobber_Mesh.visible = true
 
@@ -183,6 +178,8 @@ func _process_bite_roll(delta: float) -> void:
 	if bite_active:
 		return
 
+	var closest_hotspot: Area3D = Bobber_Area_Col.get_closest_hotspot()
+
 	if closest_hotspot == null:
 		bite_roll_timer = 0.0
 		return
@@ -194,8 +191,8 @@ func _process_bite_roll(delta: float) -> void:
 
 	bite_roll_timer = 0.0
 
-	var distance := global_position.distance_to(closest_hotspot.global_position)
-	_try_bite(distance)
+	var distance: float = Bobber_Area_Col.get_distance_to_closest_hotspot()
+	_try_bite(distance, closest_hotspot)
 
 func _on_body_entered(body) -> void:
 	if state != BobberState.casting:
@@ -212,33 +209,16 @@ func _on_area_entered(area: Area3D) -> void:
 			_enter_water()
 			return
 
-	if _is_fish_hotspot(area):
-		if not nearby_hotspots.has(area):
-			nearby_hotspots.append(area)
-
-		if state == BobberState.in_water:
-			_update_fish_heat()
-
-func _on_bobber_area_exited(area: Area3D) -> void:
-	if _is_fish_hotspot(area):
-		nearby_hotspots.erase(area)
-
-		if closest_hotspot == area:
-			closest_hotspot = null
-
-		if state == BobberState.in_water:
-			_update_fish_heat()
-
 func _update_fish_heat() -> void:
-	_refresh_nearby_hotspots()
+	Bobber_Area_Col.refresh_nearby_hotspots()
 
-	closest_hotspot = _get_closest_hotspot()
+	var closest_hotspot: Area3D = Bobber_Area_Col.get_closest_hotspot()
 
 	if closest_hotspot == null:
 		fish_prox_change.emit("Cold", null)
 		return
 
-	var distance := global_position.distance_to(closest_hotspot.global_position)
+	var distance: float = Bobber_Area_Col.get_distance_to_closest_hotspot()
 
 	if distance <= _closest_dis:
 		fish_prox_change.emit("Closest", closest_hotspot)
@@ -252,7 +232,7 @@ func _update_fish_heat() -> void:
 	else:
 		fish_prox_change.emit("Cold", closest_hotspot)
 
-func _try_bite(distance: float) -> void:
+func _try_bite(distance: float, closest_hotspot: Area3D) -> void:
 	var bite_chance := 0.0
 
 	if distance <= _closest_dis:
@@ -275,43 +255,6 @@ func _try_bite(distance: float) -> void:
 
 	print("Fish bite! Distance from hotspot: ", distance)
 	fish_bite_requested.emit("", closest_hotspot, distance)
-
-func _refresh_nearby_hotspots() -> void:
-	nearby_hotspots.clear()
-
-	var overlapping_areas := Bobber_Area.get_overlapping_areas()
-
-	for area in overlapping_areas:
-		if _is_fish_hotspot(area):
-			nearby_hotspots.append(area)
-
-func _get_closest_hotspot() -> Area3D:
-	var closest: Area3D = null
-	var closest_distance := INF
-
-	for hotspot in nearby_hotspots:
-		if hotspot == null:
-			continue
-
-		var distance := global_position.distance_to(hotspot.global_position)
-
-		if distance < closest_distance:
-			closest_distance = distance
-			closest = hotspot
-
-	return closest
-
-func _is_fish_hotspot(area: Area3D) -> bool:
-	if area == null:
-		return false
-
-	if area.is_in_group("fish_hotspot"):
-		return true
-
-	if area.name.begins_with("HotSpot_"):
-		return true
-
-	return false
 
 func _enter_water() -> void:
 	state = BobberState.in_water

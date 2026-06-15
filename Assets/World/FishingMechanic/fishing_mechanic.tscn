@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://cy5tjn6rt7eme"]
+
+[ext_resource type="Script" uid="uid://cs3sbraf3n27m" path="res://Assets/World/FishingMechanic/fishing_mechanic.gd" id="1_2ejep"]
+[ext_resource type="Script" uid="uid://cbmwo5jc6e2n2" path="res://Assets/World/FishingMechanic/fish_hooked.gd" id="2_qkkn0"]
+[ext_resource type="Script" uid="uid://hgnoakemnmpa" path="res://Assets/World/FishingMechanic/fish_difficulty.gd" id="3_dve84"]
+[ext_resource type="Script" uid="uid://mppe8xp8ihaa" path="res://Assets/World/FishingMechanic/fish_movement.gd" id="4_wng8f"]
+[ext_resource type="Script" uid="uid://b66dgdi0jj1r8" path="res://Assets/World/FishingMechanic/fish_reel_input.gd" id="5_8tbts"]
+
+[node name="FishingMechanic" type="Node3D" unique_id=972147907]
+script = ExtResource("1_2ejep")
+
+[node name="FishHooked" type="Node3D" parent="." unique_id=1389715547]
+script = ExtResource("2_qkkn0")
+
+[node name="FishDifficulty" type="Node3D" parent="." unique_id=688442576]
+script = ExtResource("3_dve84")
+
+[node name="FishMovement" type="Node3D" parent="." unique_id=701391402]
+script = ExtResource("4_wng8f")
+
+[node name="FishReelInput" type="Node3D" parent="." unique_id=646734847]
+script = ExtResource("5_8tbts")

@@ -15,17 +15,14 @@ enum PlayerState {
 @onready var Pole_Animation = $Player_AnimationPlayer
 @onready var Fishing_Pole = $"../FishingPole"
 @onready var Bobber: RigidBody3D = $"../Bobber"
-@onready var FishHooked: Node3D = $"../FishHooked"
-@onready var Camera_Pivot = $Camera_Pivot
+@onready var FishingMechanic: Node3D = $"../FishingMechanic"
+@onready var Camera_Controller = $Camera_Pivot
 @onready var Hand_Marker: Marker3D = $Camera_Pivot/Mark_Player_Hand
 @onready var Camera: Camera3D = $Camera_Pivot/Camera3D
 @onready var Mark_Line_End: Marker3D = $"../Bobber/Mark_LineEnd"
 
 var state: PlayerState = PlayerState.roaming
-
-var mouse_sensitivity := 0.002
-var free_cam := true
-var force_reeling := false
+var auto_reel := false
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -34,24 +31,19 @@ func _ready():
 	on_cast_started.connect(Pole_Animation.on_cast_started)
 
 	on_reel_started.connect(Fishing_Pole.on_reel_started)
-	on_reel_started.connect(FishHooked.release_fish)
+	on_reel_started.connect(FishingMechanic.release_fish)
 
-	fish_input_pressed.connect(FishHooked.on_player_fish_input)
+	fish_input_pressed.connect(FishingMechanic.on_player_fish_input)
 
-	Bobber.fish_bite_requested.connect(FishHooked.start_fish_bite)
-	FishHooked.fish_caught.connect(_on_fish_caught)
-	FishHooked.fish_caught_reel.connect(fish_caught_reel)
+	Bobber.fish_bite_requested.connect(FishingMechanic.start_fish_bite)
+	FishingMechanic.fish_caught.connect(_on_fish_caught)
+	FishingMechanic.fish_caught_reel.connect(fish_caught_reel)
+
+	Camera_Controller.enter_free_mode()
 
 func _unhandled_input(event: InputEvent):
-	if event is InputEventMouseMotion and free_cam:
-		rotate_y(-event.relative.x * mouse_sensitivity)
-
-		Camera_Pivot.rotate_x(-event.relative.y * mouse_sensitivity)
-		Camera_Pivot.rotation.x = clamp(
-			Camera_Pivot.rotation.x,
-			deg_to_rad(-80),
-			deg_to_rad(80)
-		)
+	if event is InputEventMouseMotion:
+		Camera_Controller.handle_mouse_motion(event)
 
 func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("debug_close"):
@@ -77,13 +69,13 @@ func _roaming_state(delta: float) -> void:
 func _fishing_state(delta: float) -> void:
 	_apply_gravity(delta)
 
-	if not force_reeling:
-		_free_cam_off()
+	if not auto_reel:
+		Camera_Controller.update_fishing_lock(delta, Mark_Line_End.global_position)
 
 	velocity.x = move_toward(velocity.x, 0, SPEED)
 	velocity.z = move_toward(velocity.z, 0, SPEED)
 
-	if not force_reeling:
+	if not auto_reel:
 		_handle_fish_input()
 
 	if Input.is_action_just_pressed("int_reel"):
@@ -104,16 +96,14 @@ func _handle_fish_input() -> void:
 
 func _enter_fishing_state() -> void:
 	state = PlayerState.fishing
-	free_cam = false
-	force_reeling = false
+	auto_reel = false
+	Camera_Controller.enter_fishing_mode()
 	_cast()
 
 func _exit_fishing_state() -> void:
 	state = PlayerState.roaming
-	free_cam = true
-	force_reeling = false
-
-	Camera_Pivot.rotation.x = 0.0
+	auto_reel = false
+	Camera_Controller.enter_free_mode()
 
 func _cast() -> void:
 	on_cast_started.emit()
@@ -126,24 +116,17 @@ func _reel() -> void:
 	_exit_fishing_state()
 
 func fish_caught_reel() -> void:
-	if force_reeling:
+	if auto_reel:
 		return
 
-	print("Fish left zone / touched terrain. Force reeling.")
-
-	force_reeling = true
-	free_cam = true
-	Camera_Pivot.rotation.x = 0.0
+	auto_reel = true
+	Camera_Controller.enter_free_mode()
 
 	_reel()
 
 func _on_fish_caught() -> void:
-	print("Player received fish caught. Returning to roaming.")
-
-	force_reeling = true
-	free_cam = true
-	Camera_Pivot.rotation.x = 0.0
-
+	auto_reel = true
+	Camera_Controller.enter_free_mode()
 	_exit_fishing_state()
 
 func _apply_gravity(delta: float) -> void:
@@ -164,29 +147,3 @@ func _handle_movement() -> void:
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
-
-func _free_cam_off() -> void:
-	if state != PlayerState.fishing:
-		return
-
-	if force_reeling:
-		return
-
-	free_cam = false
-
-	var look_target := Mark_Line_End.global_position
-	look_target.y = global_position.y
-
-	var direction := look_target - global_position
-
-	if direction.length() <= 0.01:
-		return
-
-	var target_basis := Transform3D().looking_at(direction.normalized(), Vector3.UP).basis
-
-	global_basis = global_basis.orthonormalized().slerp(
-		target_basis.orthonormalized(),
-		0.15
-	).orthonormalized()
-
-	Camera_Pivot.rotation.x = lerp(Camera_Pivot.rotation.x, 0.0, 0.15)

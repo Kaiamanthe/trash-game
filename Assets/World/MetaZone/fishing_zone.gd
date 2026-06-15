@@ -15,7 +15,6 @@ func is_point_inside_any_zone(point: Vector3) -> bool:
 	for zone in get_zones():
 		if is_point_inside_zone(point, zone):
 			return true
-
 	return false
 
 func is_point_inside_zone(point: Vector3, zone: CollisionShape3D) -> bool:
@@ -86,5 +85,4 @@ func get_combined_zone_center() -> Vector3:
 
 	center /= float(count)
 	center.y = sheets_globals.water_level
-
 	return center

@@ -36,6 +36,7 @@ func _on_fish_tired_started() -> void:
 	fish_tired_started.emit()
 
 func _on_fish_caught() -> void:
+	print("You caught a fish Goodjob!")
 	fish_caught.emit()
 
 func _on_fish_caught_reel() -> void:
